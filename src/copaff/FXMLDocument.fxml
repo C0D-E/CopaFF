@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+
+<BorderPane fx:id="mainBorderPane" prefHeight="500.0" prefWidth="720.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="copaff.FXMLDocumentController">
+   <left>
+      <VBox alignment="CENTER" BorderPane.alignment="CENTER">
+         <children>
+            <JFXButton buttonType="RAISED" onAction="#handleRegisterAction" ripplerFill="#c0e80f" text="Registro" VBox.vgrow="ALWAYS">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </JFXButton>
+            <JFXButton buttonType="RAISED" ripplerFill="#c0e80f" text="Tabla" VBox.vgrow="ALWAYS">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </JFXButton>
+            <JFXButton buttonType="RAISED" ripplerFill="#c0e80f" text="Info" VBox.vgrow="ALWAYS">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </JFXButton>
+            <JFXButton buttonType="RAISED" ripplerFill="#c0e80f" text="Acerca de" VBox.vgrow="ALWAYS">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </JFXButton>
+         </children>
+      </VBox>
+   </left>
+   <center>
+      <AnchorPane BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets left="10.0" right="20.0" />
+         </BorderPane.margin>
+         <children>
+            <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="200.0">
+               <image>
+                  <Image url="@BlackammoLogoBase.png" />
+               </image>
+            </ImageView>
+         </children>
+      </AnchorPane>
+   </center>
+   <bottom>
+      <AnchorPane prefHeight="40.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label text="BLACKAMMO" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
+            <Label text="COPA FF v1.0" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+         </children>
+      </AnchorPane>
+   </bottom>
+</BorderPane>

@@ -1,0 +1,71 @@
+*{
+    -FONT-SIZE: 14px;
+}
+
+.input-line{
+    /*    -fx-pref-height: 1px;
+         -fx-translate-y: 1px;*/
+}
+.input-focused-line{
+    /*    -fx-pref-height: 2px;
+        -fx-translate-y: 1px;*/
+}
+
+.vbox{
+    -fx-background-color: TRANSPARENT;
+}
+.hbox{
+    -fx-background-color: TRANSPARENT;
+}
+.jfx-combo-box {
+    -fx-background-color: TRANSPARENT;
+    -fx-text-fill: BLACK;
+    -fx-font-size: 14px;
+    -fx-pref-height: 30;
+    -fx-background-radius: 0 0 0 0;
+    -fx-background-insets: 0 0 0 0, 0, 0, 0;
+    -jfx-focus-color: TRANSPARENT;
+    -jfx-unfocus-color: TRANSPARENT;
+    /*-fx-focused-mark-color: transparent;  The solution! */
+}
+/*.list-cell:selected:empty{
+    -fx-content-display: center;
+}*/
+.combo-box-base > *.arrow-button {
+    -fx-background-radius: 0px;
+}
+.jfx-combo-box > .arrow-button {
+    -fx-background-color: null;
+    -fx-padding: 0 3 0 0;
+}
+.jfx-combo-box > .arrow-button > .arrow {
+    -fx-background-color: black;
+    -fx-scale-x: 1;
+    -fx-scale-y: 1.8;
+
+}
+.jfx-combo-box > .text-field {
+    -fx-background-color: black;
+    -fx-prompt-text-fill: black;
+    /*-fx-padding: 1 1 1 8;*/
+    -fx-alignment: center;
+}
+
+.jfx-text-field{
+    -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color, WHITE;
+    -fx-font-weight: NORMAL;
+    -fx-font-size: 14px;
+    -fx-pref-height: 30;
+    -fx-padding: 7 5 0 5; 
+    -fx-background-radius: 0px;
+    -fx-background-insets: 0 0 0 0, 0, 0, 0;
+}
+
+.label{
+    -fx-background-color: TRANSPARENT;
+    /*-fx-font-weight: BOLD;*/
+    -fx-font-size: 14px;
+    -fx-pref-height: 30;
+    -fx-padding: 7 5 0 5; 
+}
+

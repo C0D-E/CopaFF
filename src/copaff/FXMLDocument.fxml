@@ -11,7 +11,7 @@
 <?import javafx.scene.text.Font?>
 
 
-<BorderPane fx:id="mainBorderPane" prefHeight="500.0" prefWidth="720.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="copaff.FXMLDocumentController">
+<BorderPane fx:id="mainBorderPane" prefHeight="500.0" prefWidth="720.0" xmlns="http://javafx.com/javafx/1.8.0_281" xmlns:fx="http://javafx.com/fxml/1" fx:controller="copaff.FXMLDocumentController">
    <left>
       <VBox alignment="CENTER" BorderPane.alignment="CENTER">
          <children>

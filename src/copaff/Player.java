@@ -5,6 +5,8 @@
  */
 package copaff;
 
+import java.time.LocalDateTime;
+
 /**
  *
  * @author Gustavo A Salazar Lima
@@ -12,10 +14,27 @@ package copaff;
 public class Player {
 
     private String name;
+    private String nickname;
     private String ffId;
-    private Team team;
-    private Clan clan;
+    private String titulo;
+    private String foto;
     private String country;
+    private LocalDateTime createdOn;
+
+    public Player() {
+    }
+
+    public Player(String name, String nickname, String ffId, String titulo,
+            String foto, String country) {
+        this.name = name;
+        this.nickname = nickname;
+        this.ffId = ffId;
+        this.titulo = titulo;
+        this.foto = foto;
+        this.country = country;
+        this.createdOn = LocalDateTime.now();
+
+    }
 
     /**
      * @return the name
@@ -25,10 +44,17 @@ public class Player {
     }
 
     /**
-     * @param name the name to set
+     * @return the nickname
      */
-    public void setName(String name) {
-        this.name = name;
+    public String getNickname() {
+        return nickname;
+    }
+
+    /**
+     * @param nickname the name to set
+     */
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     /**
@@ -39,31 +65,24 @@ public class Player {
     }
 
     /**
-     * @return the team
+     * @return the titulo
      */
-    public Team getTeam() {
-        return team;
+    public String getTitulo() {
+        return titulo;
     }
 
     /**
-     * @param team the team to set
+     * @param titulo the name to set
      */
-    public void setTeam(Team team) {
-        this.team = team;
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
     }
 
     /**
-     * @return the clan
+     * @return the foto
      */
-    public Clan getClan() {
-        return clan;
-    }
-
-    /**
-     * @param clan the clan to set
-     */
-    public void setClan(Clan clan) {
-        this.clan = clan;
+    public String getFoto() {
+        return foto;
     }
 
     /**
@@ -71,6 +90,13 @@ public class Player {
      */
     public String getCountry() {
         return country;
+    }
+
+    /**
+     * @return the createdOn
+     */
+    public LocalDateTime getCreatedOn() {
+        return createdOn;
     }
 
 }

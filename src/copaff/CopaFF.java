@@ -16,13 +16,18 @@ import javafx.stage.Stage;
  * @author tavos
  */
 public class CopaFF extends Application {
-    
+
+    public static Stage stage;
+    public static Scene scene;
+
     @Override
     public void start(Stage stage) throws Exception {
+        CopaFF.stage = stage;
         Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
-        
+
         Scene scene = new Scene(root);
-        
+        CopaFF.scene = scene;
+
         stage.setScene(scene);
         stage.show();
     }
@@ -33,5 +38,5 @@ public class CopaFF extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-    
+
 }

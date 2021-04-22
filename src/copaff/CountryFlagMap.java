@@ -5,7 +5,6 @@
  */
 package copaff;
 
-import copaff.CountriesFetcher;
 import java.util.Map;
 import javafx.scene.image.Image;
 

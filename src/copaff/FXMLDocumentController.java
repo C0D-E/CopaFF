@@ -41,6 +41,7 @@ public class FXMLDocumentController implements Initializable {
             ft.play();
             mainBorderPane.setCenter(registration);
         } catch (IOException ex) {
+            ex.printStackTrace();
             handleError(Alert.AlertType.ERROR, ex, "It was unable to load the Registration Form", ButtonType.OK);
         }
 

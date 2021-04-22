@@ -100,4 +100,9 @@ public class Country {
     public boolean equals(Object o) {
         return (o instanceof Country) && (((Country) o).getIso().toUpperCase().equals(this.getIso().toUpperCase()));
     }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

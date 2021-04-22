@@ -3,10 +3,8 @@
  *To change this template file, choose Tools | Templates
  *and open the template in the editor.
  */
-package com.keyword.intlphonenumberinput;
+package copaff;
 
-import copaff.CountryFlagMap;
-import copaff.CountriesFetcher;
 import java.util.HashMap;
 import java.util.Map;
 import javafx.concurrent.Task;

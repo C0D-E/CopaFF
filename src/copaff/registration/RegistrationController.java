@@ -7,18 +7,20 @@ package copaff.registration;
 
 import com.jfoenix.controls.JFXComboBox;
 import copaff.CountriesFetcher;
-import copaff.CountriesFetcher.CountryList;
 import copaff.Country;
-import com.keyword.intlphonenumberinput.IntlPhoneNumberInputControl;
+import copaff.LoadCountryFlags;
+import copaff.CountryCellView;
 import java.net.URL;
+import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutionException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.image.Image;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 
@@ -28,6 +30,9 @@ import javafx.scene.layout.GridPane;
  * @author tavos
  */
 public class RegistrationController implements Initializable {
+
+    public static Map<String, Image> flags;
+    public static CountriesFetcher.CountryList countries;
 
     @FXML
     private ColumnConstraints labels;
@@ -49,26 +54,40 @@ public class RegistrationController implements Initializable {
     private GridPane gridPane;
     @FXML
     private JFXComboBox<Country> country;
+    @FXML
+    private TextField kills;
+    @FXML
+    private TextField position;
 
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        CountryList countries = CountriesFetcher.getCountries();
+        LoadCountryFlags loadCountryFlags = new LoadCountryFlags();
+        Thread th = new Thread(loadCountryFlags);
+        th.setDaemon(true);
+        th.start();
+        try {
+            flags = loadCountryFlags.get().getFlags();
+            countries = loadCountryFlags.get().getCountryList();
+            init();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException ex) {
+            ex.printStackTrace();
+        }
+
+    }
+
+    public final void init() {
         country.getItems().addAll(countries);
-    }
-
-    @FXML
-    private void handleAddressAction(MouseEvent event) {
-    }
-
-    @FXML
-    private void handleEmailAddressAction(MouseEvent event) {
+        country.setCellFactory((ListView<Country> p) -> new CountryCellView());
     }
 
     @FXML
     private void handleRegisterAction(ActionEvent event) {
+
     }
 
 }

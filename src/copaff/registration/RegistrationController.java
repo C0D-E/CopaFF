@@ -6,34 +6,28 @@
 package copaff.registration;
 
 import com.jfoenix.controls.JFXComboBox;
-import copaff.CountriesFetcher;
-import copaff.Country;
-import copaff.LoadCountryFlags;
-import copaff.CountryCellView;
 import java.net.URL;
-import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.concurrent.ExecutionException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 
 /**
  * FXML Controller class
  *
- * @author tavos
+ * @author TAVOS
  */
 public class RegistrationController implements Initializable {
 
-    public static Map<String, Image> flags;
-    public static CountriesFetcher.CountryList countries;
-
+    @FXML
+    private StackPane stackpane;
+    @FXML
+    private GridPane gridPane;
     @FXML
     private ColumnConstraints labels;
     @FXML
@@ -51,9 +45,7 @@ public class RegistrationController implements Initializable {
     @FXML
     private Button register;
     @FXML
-    private GridPane gridPane;
-    @FXML
-    private JFXComboBox<Country> country;
+    private JFXComboBox<?> country;
     @FXML
     private TextField kills;
     @FXML
@@ -64,30 +56,11 @@ public class RegistrationController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        LoadCountryFlags loadCountryFlags = new LoadCountryFlags();
-        Thread th = new Thread(loadCountryFlags);
-        th.setDaemon(true);
-        th.start();
-        try {
-            flags = loadCountryFlags.get().getFlags();
-            countries = loadCountryFlags.get().getCountryList();
-            init();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException ex) {
-            ex.printStackTrace();
-        }
-
-    }
-
-    public final void init() {
-        country.getItems().addAll(countries);
-        country.setCellFactory((ListView<Country> p) -> new CountryCellView());
-    }
+        // TODO
+    }    
 
     @FXML
     private void handleRegisterAction(ActionEvent event) {
-
     }
-
+    
 }

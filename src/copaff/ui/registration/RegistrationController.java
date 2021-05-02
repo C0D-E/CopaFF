@@ -9,6 +9,8 @@ import com.jfoenix.controls.JFXComboBox;
 import copaff.alert.AlertMaker;
 import copaff.database.DataHelper;
 import copaff.model.Player;
+import copaff.model.relations.FixedSquad;
+import copaff.model.relations.SquadAlternate;
 import copaff.util.CountriesFetcher;
 import copaff.util.Country;
 import copaff.util.LoadCountryFlags;
@@ -45,27 +47,24 @@ public class RegistrationController implements Initializable {
     @FXML
     private ColumnConstraints space;
     @FXML
-    private TextField name;
-    @FXML
-    private TextField ffId;
-    @FXML
     private TextField squadName;
     @FXML
     private TextField clanName;
     @FXML
-    private TextField clanId;
-    @FXML
-    private Button register;
-    @FXML
-    private JFXComboBox<Country> country;
-    @FXML
-    private TextField kills;
-    @FXML
-    private TextField position;
-    @FXML
     private StackPane rootPane;
     @FXML
     private GridPane mainContainer;
+    private TextField squadId;
+    @FXML
+    private TextField playerName;
+    @FXML
+    private TextField playerID;
+    @FXML
+    private JFXComboBox<Country> playerCountry;
+    @FXML
+    private TextField squadID;
+    @FXML
+    private TextField clanID;
 
     /**
      * Initializes the controller class.
@@ -89,15 +88,15 @@ public class RegistrationController implements Initializable {
     }
 
     public final void init() {
-        country.getItems().addAll(countries);
-        country.setCellFactory((ListView<Country> p) -> new CountryCellView());
+        playerCountry.getItems().addAll(countries);
+        playerCountry.setCellFactory((ListView<Country> p) -> new CountryCellView());
     }
 
     @FXML
-    private void handleRegisterAction(ActionEvent event) {
-        String playerName = StringUtils.trimToEmpty(name.getText());
-        String playerID = StringUtils.trimToEmpty(ffId.getText());
-        String playerCountry = StringUtils.trimToEmpty(country.getEditor().getText());
+    private void handleRegisterPlayerAction(ActionEvent event) {
+        String playerName = StringUtils.trimToEmpty(this.playerName.getText());
+        String playerID = StringUtils.trimToEmpty(this.playerID.getText());
+        String playerCountry = StringUtils.trimToEmpty(this.playerCountry.getEditor().getText());
 
         if (playerName.isEmpty() || playerID.isEmpty() || playerCountry.isEmpty()) {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Insufficient Data", "Please enter data in all fields.");
@@ -111,17 +110,62 @@ public class RegistrationController implements Initializable {
         Player player = new Player(playerID, playerID, playerCountry);
         boolean result = DataHelper.insertNewPlayer(player);
         if (result) {
-            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "New book added", playerName + " has been added");
-            clearEntries();
+            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "New player added", playerName + " has been added");
+            this.playerName.clear();
+            this.playerID.clear();
+            this.playerCountry.getEditor().clear();
         } else {
-            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Failed to add new book", "Check all the entries and try again");
+            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Failed to add new player", "Check all the entries and try again");
         }
     }
 
-    private void clearEntries() {
-        name.clear();
-        ffId.clear();
-        country.getEditor().clear();
+    @FXML
+    private void handleRegisterSquadAction(ActionEvent event) {
+        String squadName = StringUtils.trimToEmpty(this.squadName.getText());
+        String squadID = StringUtils.trimToEmpty(this.squadID.getText());
+
+        if (squadName.isEmpty() || squadID.isEmpty()) {
+            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Insufficient Data", "Please enter data in all fields.");
+            return;
+        }
+
+        if (DataHelper.isPlayerExists(squadID)) {
+            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Duplicate squad id", "Squad with same squad ID exists.\nPlease use new ID");
+            return;
+        }
+        FixedSquad fixedSquad = new FixedSquad(squadID);
+        boolean result = DataHelper.insertNewFixedSquad(fixedSquad);
+        if (result) {
+            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "New squad added", squadName + " has been added");
+            this.squadName.clear();
+            this.squadID.clear();
+        } else {
+            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Failed to add new squad", "Check all the entries and try again");
+        }
     }
 
+    @FXML
+    private void handleRegisterClanAction(ActionEvent event) {
+        String clanName = StringUtils.trimToEmpty(this.clanName.getText());
+        String clanID = StringUtils.trimToEmpty(this.clanID.getText());
+
+        if (clanName.isEmpty() || clanID.isEmpty()) {
+            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Insufficient Data", "Please enter data in all fields.");
+            return;
+        }
+
+        if (DataHelper.isPlayerExists(clanID)) {
+            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Duplicate clan id", "Squad with same clan ID exists.\nPlease use new ID");
+            return;
+        }
+        FixedSquad fixedSquad = new FixedSquad(clanID);
+        boolean result = DataHelper.insertNewFixedSquad(fixedSquad);
+        if (result) {
+            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "New clan added", clanName + " has been added");
+            this.clanName.clear();
+            this.clanID.clear();
+        } else {
+            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Failed to add new clan", "Check all the entries and try again");
+        }
+    }
 }

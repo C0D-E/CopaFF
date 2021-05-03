@@ -5,6 +5,8 @@
  */
 package copaff.model;
 
+import java.sql.Blob;
+
 /**
  *
  * @author Gustavo A Salazar Lima

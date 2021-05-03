@@ -8,6 +8,7 @@ import copaff.model.match_modes.Scrimmage;
 import copaff.model.relations.FixedSquad;
 import copaff.model.relations.Game;
 import copaff.model.relations.SquadAlternate;
+import java.io.FileInputStream;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -25,12 +26,13 @@ public class DataHelper {
 
     private final static Logger LOGGER = LogManager.getLogger(DatabaseHandler.class.getName());
 
-    public static boolean insertNewClan(Clan clan) {
+    public static boolean insertNewClan(Clan clan, FileInputStream fs, int fLength) {
         try {
             PreparedStatement statement = DatabaseHandler.getInstance().getConnection().prepareStatement(
-                    "INSERT INTO CLAN(id,name) VALUES(?,?)");
+                    "INSERT INTO CLAN(id,name,logo) VALUES(?,?,?)");
             statement.setString(1, clan.getId());
             statement.setString(2, clan.getName());
+            statement.setBinaryStream(3, fs, fLength);
             return statement.executeUpdate() > 0;
         } catch (SQLException ex) {
             LOGGER.log(Level.ERROR, "{}", ex);
@@ -38,14 +40,15 @@ public class DataHelper {
         return false;
     }
 
-    public static boolean insertNewPlayer(Player player) {
+    public static boolean insertNewPlayer(Player player, FileInputStream fs, int fLength) {
         try {
             PreparedStatement statement = DatabaseHandler.getInstance().getConnection().prepareStatement(
-                    "INSERT INTO PLAYER(id,name,country,created) VALUES(?,?,?,?)");
+                    "INSERT INTO PLAYER(id,name,country,logo,created) VALUES(?,?,?,?,?)");
             statement.setString(1, player.getId());
             statement.setString(2, player.getName());
             statement.setString(3, player.getCountry());
-            statement.setTimestamp(4, Timestamp.valueOf(player.getCreationDateTime()));
+            statement.setBinaryStream(4, fs, fLength);
+            statement.setTimestamp(5, Timestamp.valueOf(player.getCreationDateTime()));
             return statement.executeUpdate() > 0;
         } catch (SQLException ex) {
             LOGGER.log(Level.ERROR, "{}", ex);
@@ -53,12 +56,13 @@ public class DataHelper {
         return false;
     }
 
-    public static boolean insertNewSquad(Squad squad) {
+    public static boolean insertNewSquad(Squad squad, FileInputStream fs, int fLength) {
         try {
             PreparedStatement statement = DatabaseHandler.getInstance().getConnection().prepareStatement(
-                    "INSERT INTO SQUAD(id,name) VALUES(?,?)");
+                    "INSERT INTO SQUAD(id,name,logo) VALUES(?,?,?)");
             statement.setString(1, squad.getId());
             statement.setString(2, squad.getName());
+            statement.setBinaryStream(3, fs, fLength);
             return statement.executeUpdate() > 0;
         } catch (SQLException ex) {
             LOGGER.log(Level.ERROR, "{}", ex);
@@ -66,12 +70,13 @@ public class DataHelper {
         return false;
     }
 
-    public static boolean insertNewTeam(Team team) {
+    public static boolean insertNewTeam(Team team, FileInputStream fs, int fLength) {
         try {
             PreparedStatement statement = DatabaseHandler.getInstance().getConnection().prepareStatement(
-                    "INSERT INTO TEAM(id,name) VALUES(?,?)");
+                    "INSERT INTO TEAM(id,name,logo) VALUES(?,?,?)");
             statement.setString(1, team.getId());
             statement.setString(2, team.getName());
+            statement.setBinaryStream(3, fs, fLength);
             return statement.executeUpdate() > 0;
         } catch (SQLException ex) {
             LOGGER.log(Level.ERROR, "{}", ex);

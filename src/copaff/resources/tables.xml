@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <tables>
-    <table-entry name="PLAYER" col-data="id varchar(200) primary key,name varchar(200),country varchar(200),created timestamp"/>
-    <table-entry name="SQUAD" col-data="id varchar(200) primary key,name varchar(200)"/>
-    <table-entry name="TEAM" col-data="id varchar(200) primary key,name varchar(200)"/>
-    <table-entry name="CLAN" col-data="id varchar(200) primary key,name varchar(200)"/>
+    <table-entry name="PLAYER" col-data="id varchar(200) primary key,name varchar(200),country varchar(200),logo blob,created timestamp"/>
+    <table-entry name="SQUAD" col-data="id varchar(200) primary key,name varchar(200),logo blob"/>
+    <table-entry name="TEAM" col-data="id varchar(200) primary key,name varchar(200),logo blob"/>
+    <table-entry name="CLAN" col-data="id varchar(200) primary key,name varchar(200),logo blob"/>
     <table-entry name="FIXEDSQUAD" col-data="playerID varchar(200) primary key,FOREIGN KEY (playerID) REFERENCES PLAYER(id)"/>
     <table-entry name="SQUADALTERNATE" col-data="playerID varchar(200) primary key,FOREIGN KEY (playerID) REFERENCES PLAYER(id)"/>
     <table-entry name="SCRIMMAGE" col-data="id varchar(200) primary key,creatorID varchar(200),map varchar(20),block int,created timestamp,FOREIGN KEY (creatorID) REFERENCES PLAYER(id)"/>

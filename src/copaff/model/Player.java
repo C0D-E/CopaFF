@@ -5,6 +5,7 @@
  */
 package copaff.model;
 
+import java.sql.Blob;
 import java.time.LocalDateTime;
 
 /**

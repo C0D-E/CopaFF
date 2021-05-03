@@ -5,31 +5,41 @@
  */
 package copaff.ui.registration;
 
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
+import com.jfoenix.controls.JFXTextField;
 import copaff.alert.AlertMaker;
 import copaff.database.DataHelper;
+import copaff.model.Clan;
 import copaff.model.Player;
-import copaff.model.relations.FixedSquad;
-import copaff.model.relations.SquadAlternate;
+import copaff.model.Squad;
+import copaff.model.Team;
 import copaff.util.CountriesFetcher;
 import copaff.util.Country;
 import copaff.util.LoadCountryFlags;
 import copaff.util.CountryCellView;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -43,34 +53,57 @@ public class RegistrationController implements Initializable {
     public static CountriesFetcher.CountryList countries;
 
     @FXML
-    private ColumnConstraints labels;
+    private JFXTextField squadName;
     @FXML
-    private ColumnConstraints space;
-    @FXML
-    private TextField squadName;
-    @FXML
-    private TextField clanName;
+    private JFXTextField clanName;
     @FXML
     private StackPane rootPane;
     @FXML
-    private GridPane mainContainer;
-    private TextField squadId;
+    private VBox mainContainer;
     @FXML
-    private TextField playerName;
+    private JFXTextField playerName;
     @FXML
-    private TextField playerID;
+    private JFXTextField playerID;
     @FXML
     private JFXComboBox<Country> playerCountry;
     @FXML
-    private TextField squadID;
+    private JFXTextField squadID;
     @FXML
-    private TextField clanID;
+    private JFXTextField clanID;
+    @FXML
+    private JFXComboBox<Squad> playerSquad;
+    @FXML
+    private ImageView squadLogo;
+    @FXML
+    private ImageView teamLogo;
+    @FXML
+    private ImageView clanLogo;
+    @FXML
+    private JFXButton genSquadID;
+    @FXML
+    private JFXTextField teamName;
+    @FXML
+    private JFXTextField teamID;
+    @FXML
+    private JFXButton genTeamID;
+    @FXML
+    private JFXButton playerLogo;
+    @FXML
+    private Label squadLogoLabel;
+    @FXML
+    private Label teamLogoLabel;
+    @FXML
+    private Label clanLogoLabel;
 
     /**
      * Initializes the controller class.
+     *
+     * @param url
+     * @param rb
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        System.out.println("Ajajajajaj");
         LoadCountryFlags loadCountryFlags = new LoadCountryFlags();
         Thread th = new Thread(loadCountryFlags);
         th.setDaemon(true);
@@ -79,12 +112,17 @@ public class RegistrationController implements Initializable {
             flags = loadCountryFlags.get().getFlags();
             countries = loadCountryFlags.get().getCountryList();
             init();
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
-        } catch (ExecutionException ex) {
-            ex.printStackTrace();
         }
+        genSquadID.setUserData(squadID);
+        genTeamID.setUserData(teamID);
 
+        squadLogoLabel.setUserData(squadLogo);
+        teamLogoLabel.setUserData(teamLogo);
+        clanLogoLabel.setUserData(clanLogo);
+        
+        playerLogo.setUserData("C:\\Users\\TAVOS\\Documents\\NetBeansProjects\\CopaFF\\src\\copaff\\ui\\main\\user.png");
     }
 
     public final void init() {
@@ -94,78 +132,174 @@ public class RegistrationController implements Initializable {
 
     @FXML
     private void handleRegisterPlayerAction(ActionEvent event) {
-        String playerName = StringUtils.trimToEmpty(this.playerName.getText());
-        String playerID = StringUtils.trimToEmpty(this.playerID.getText());
-        String playerCountry = StringUtils.trimToEmpty(this.playerCountry.getEditor().getText());
+        String playerNameTmp = StringUtils.trimToEmpty(playerName.getText());
+        String playerIDTmp = StringUtils.trimToEmpty(playerID.getText());
+        String playerCountryTmp = StringUtils.trimToEmpty(playerCountry.getEditor().getText());
 
-        if (playerName.isEmpty() || playerID.isEmpty() || playerCountry.isEmpty()) {
+        if (playerNameTmp.isEmpty() || playerIDTmp.isEmpty() || playerCountryTmp.isEmpty()) {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Insufficient Data", "Please enter data in all fields.");
             return;
         }
 
-        if (DataHelper.isPlayerExists(playerID)) {
-            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Duplicate player id", "Player with same Player ID exists.\nPlease use new ID");
+        if (DataHelper.isPlayerExists(playerIDTmp)) {
+            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Duplicate player id", "Player with same PlayerID exists.\nPlease use new ID");
             return;
         }
-        Player player = new Player(playerID, playerID, playerCountry);
-        boolean result = DataHelper.insertNewPlayer(player);
+
+        File f = new File((String) playerLogo.getUserData());
+        FileInputStream fs = null;
+        try {
+            fs = new FileInputStream(f);
+        } catch (FileNotFoundException ex) {
+            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Failed to add new player", ex.toString());
+            return;
+        }
+
+        Player player = new Player(playerNameTmp, playerIDTmp, playerCountryTmp);
+        boolean result = DataHelper.insertNewPlayer(player, fs, (int) f.length());
         if (result) {
-            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "New player added", playerName + " has been added");
-            this.playerName.clear();
-            this.playerID.clear();
-            this.playerCountry.getEditor().clear();
+            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "New player added", playerNameTmp + " has been added");
+            playerName.clear();
+            playerID.clear();
+            playerCountry.getEditor().clear();
         } else {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Failed to add new player", "Check all the entries and try again");
         }
     }
 
     @FXML
-    private void handleRegisterSquadAction(ActionEvent event) {
-        String squadName = StringUtils.trimToEmpty(this.squadName.getText());
-        String squadID = StringUtils.trimToEmpty(this.squadID.getText());
+    private void handleGenerateIDAction(ActionEvent event) {
+        Button button = (Button) event.getSource();
+        JFXTextField field = (JFXTextField) button.getUserData();
 
-        if (squadName.isEmpty() || squadID.isEmpty()) {
+        String squadIDTmp = UUID.randomUUID().toString();
+        field.setText(squadIDTmp.toUpperCase());
+    }
+
+    @FXML
+    private void handleRegisterSquadAction(ActionEvent event) {
+        String squadNameTmp = StringUtils.trimToEmpty(squadName.getText());
+        String squadIDTmp = StringUtils.trimToEmpty(squadID.getText());
+
+        if (squadNameTmp.isEmpty() || squadIDTmp.isEmpty()) {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Insufficient Data", "Please enter data in all fields.");
             return;
         }
 
-        if (DataHelper.isPlayerExists(squadID)) {
+        if (DataHelper.isSquadExists(squadIDTmp)) {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Duplicate squad id", "Squad with same squad ID exists.\nPlease use new ID");
             return;
         }
-        FixedSquad fixedSquad = new FixedSquad(squadID);
-        boolean result = DataHelper.insertNewFixedSquad(fixedSquad);
+
+        File f = new File((String) squadLogoLabel.getUserData());
+        FileInputStream fs = null;
+        try {
+            fs = new FileInputStream(f);
+        } catch (FileNotFoundException ex) {
+            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Failed to add new squad", ex.toString());
+            return;
+        }
+
+        Squad squad = new Squad(squadNameTmp, squadIDTmp);
+        boolean result = DataHelper.insertNewSquad(squad, fs, (int) f.length());
         if (result) {
-            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "New squad added", squadName + " has been added");
-            this.squadName.clear();
-            this.squadID.clear();
+            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "New squad added", squadNameTmp + " has been added");
+            squadName.clear();
+            squadID.clear();
         } else {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Failed to add new squad", "Check all the entries and try again");
         }
     }
 
     @FXML
-    private void handleRegisterClanAction(ActionEvent event) {
-        String clanName = StringUtils.trimToEmpty(this.clanName.getText());
-        String clanID = StringUtils.trimToEmpty(this.clanID.getText());
+    private void handleRegisterTeamAction(ActionEvent event) {
+        String teamNameTmp = StringUtils.trimToEmpty(teamName.getText());
+        String teamIDTmp = StringUtils.trimToEmpty(teamID.getText());
 
-        if (clanName.isEmpty() || clanID.isEmpty()) {
+        if (teamNameTmp.isEmpty() || teamIDTmp.isEmpty()) {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Insufficient Data", "Please enter data in all fields.");
             return;
         }
 
-        if (DataHelper.isPlayerExists(clanID)) {
-            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Duplicate clan id", "Squad with same clan ID exists.\nPlease use new ID");
+        if (DataHelper.isClanExists(teamNameTmp)) {
+            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Duplicate team id", "Team with same teamID exists.\nPlease use new ID");
             return;
         }
-        FixedSquad fixedSquad = new FixedSquad(clanID);
-        boolean result = DataHelper.insertNewFixedSquad(fixedSquad);
+
+        File f = new File((String) teamLogoLabel.getUserData());
+        FileInputStream fs = null;
+        try {
+            fs = new FileInputStream(f);
+        } catch (FileNotFoundException ex) {
+            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Failed to add new team", ex.toString());
+            return;
+        }
+
+        Team team = new Team(teamNameTmp, teamIDTmp);
+        boolean result = DataHelper.insertNewTeam(team, fs, (int) f.length());
         if (result) {
-            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "New clan added", clanName + " has been added");
-            this.clanName.clear();
-            this.clanID.clear();
+            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "New clan added", teamNameTmp + " has been added");
+            teamName.clear();
+            teamID.clear();
         } else {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Failed to add new clan", "Check all the entries and try again");
         }
     }
+
+    @FXML
+    private void handleRegisterClanAction(ActionEvent event) {
+        String clanNameTmp = StringUtils.trimToEmpty(clanName.getText());
+        String clanIDTmp = StringUtils.trimToEmpty(clanID.getText());
+
+        if (clanNameTmp.isEmpty() || clanIDTmp.isEmpty()) {
+            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Insufficient Data", "Please enter data in all fields.");
+            return;
+        }
+
+        if (DataHelper.isClanExists(clanIDTmp)) {
+            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Duplicate clan id", "Clan with same clanID exists.\nPlease use new ID");
+            return;
+        }
+
+        File f = new File((String) clanLogoLabel.getUserData());
+        FileInputStream fs = null;
+        try {
+            fs = new FileInputStream(f);
+        } catch (FileNotFoundException ex) {
+            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Failed to add new clan", ex.toString());
+            return;
+        }
+
+        Clan clan = new Clan(clanNameTmp, clanIDTmp);
+        boolean result = DataHelper.insertNewClan(clan, fs, (int) f.length());
+        if (result) {
+            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "New clan added", clanNameTmp + " has been added");
+            clanName.clear();
+            clanID.clear();
+        } else {
+            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Failed to add new clan", "Check all the entries and try again");
+        }
+    }
+
+    @FXML
+    private void handleUpload(MouseEvent event) {
+        Label logo = (Label) event.getSource();
+
+        FileChooser fileChooser = new FileChooser();
+
+        //Set extension filter
+        //Show open file dialog
+        File file = fileChooser.showOpenDialog(null);
+        if (file != null) {
+            try {
+                String imageUrl = file.toURI().toURL().toExternalForm();
+                Image image = new Image(imageUrl);
+                ((ImageView) logo.getUserData()).setImage(image);
+                logo.setUserData(imageUrl.replaceAll("file:/", ""));
+            } catch (MalformedURLException ex) {
+                throw new IllegalStateException(ex);
+            }
+        }
+    }
+
 }

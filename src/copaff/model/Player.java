@@ -27,6 +27,13 @@ public class Player {
         this.name = name;
         this.country = country;
         this.created = LocalDateTime.now();
+    }
+
+    public Player(String name, String id, String country, LocalDateTime created) {
+        this.id = id;
+        this.name = name;
+        this.country = country;
+        this.created = created;
 
     }
 
@@ -70,5 +77,10 @@ public class Player {
      */
     public LocalDateTime getCreationDateTime() {
         return created;
+    }
+
+    @Override
+    public String toString() {
+        return name + " - " + id;
     }
 }

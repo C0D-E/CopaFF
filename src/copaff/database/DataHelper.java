@@ -26,6 +26,48 @@ public class DataHelper {
 
     private final static Logger LOGGER = LogManager.getLogger(DatabaseHandler.class.getName());
 
+    public static boolean createFixedSquadTable(String tableName) {
+        try {
+            String sql = "CREATE TABLE SQUAD" + tableName.replaceAll("-", "") + " (\n"
+                    + "	playerID varchar(200) primary key)";
+                    //+ "FOREIGN KEY (playerID) REFERENCES PLAYER(id))";
+            PreparedStatement statement = DatabaseHandler.getInstance().getConnection().prepareStatement(sql);
+            return statement.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            LOGGER.log(Level.ERROR, "{}", ex);
+        }
+        return false;
+    }
+
+    public static boolean insertPLayerInFixedSquad(String tableName, Player player) {
+        try {
+            PreparedStatement statement = DatabaseHandler.getInstance().getConnection().prepareStatement(
+                    "INSERT INTO SQUAD" + tableName.replaceAll("-", "") + "(playerID) VALUES(?)");
+            statement.setString(1, player.getId());
+            return statement.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            LOGGER.log(Level.ERROR, "{}", ex);
+        }
+        return false;
+    }
+
+    public static boolean isPlayerExistsInFixedSquad(String tableName, String id) {
+        try {
+            String checkstmt = "SELECT COUNT(*) FROM SQUAD" + tableName.replaceAll("-", "") + " WHERE id=?";
+            PreparedStatement stmt = DatabaseHandler.getInstance().getConnection().prepareStatement(checkstmt);
+            stmt.setString(1, id);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                int count = rs.getInt(1);
+                System.out.println(count);
+                return (count > 0);
+            }
+        } catch (SQLException ex) {
+            LOGGER.log(Level.ERROR, "{}", ex);
+        }
+        return false;
+    }
+
     public static boolean insertNewClan(Clan clan, FileInputStream fs, int fLength) {
         try {
             PreparedStatement statement = DatabaseHandler.getInstance().getConnection().prepareStatement(
@@ -266,7 +308,7 @@ public class DataHelper {
         try {
             String checkstmt = "SELECT COUNT(*) FROM FIXEDSQUAD WHERE id=?";
             PreparedStatement stmt = DatabaseHandler.getInstance().getConnection().prepareStatement(checkstmt);
-            stmt.setString(1, id);
+            stmt.setString(1, "SQUAD" + id.replaceAll("-", ""));
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 int count = rs.getInt(1);

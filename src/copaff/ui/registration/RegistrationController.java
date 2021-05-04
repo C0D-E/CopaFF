@@ -28,6 +28,8 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -71,8 +73,6 @@ public class RegistrationController implements Initializable {
     @FXML
     private JFXTextField clanID;
     @FXML
-    private JFXComboBox<Squad> playerSquad;
-    @FXML
     private ImageView squadLogo;
     @FXML
     private ImageView teamLogo;
@@ -87,13 +87,15 @@ public class RegistrationController implements Initializable {
     @FXML
     private JFXButton genTeamID;
     @FXML
-    private JFXButton playerLogo;
+    private ImageView playerLogo;
     @FXML
     private Label squadLogoLabel;
     @FXML
     private Label teamLogoLabel;
     @FXML
     private Label clanLogoLabel;
+    @FXML
+    private Label playerLogoLabel;
 
     /**
      * Initializes the controller class.
@@ -103,7 +105,6 @@ public class RegistrationController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        System.out.println("Ajajajajaj");
         LoadCountryFlags loadCountryFlags = new LoadCountryFlags();
         Thread th = new Thread(loadCountryFlags);
         th.setDaemon(true);
@@ -118,11 +119,21 @@ public class RegistrationController implements Initializable {
         genSquadID.setUserData(squadID);
         genTeamID.setUserData(teamID);
 
+        playerLogoLabel.setUserData(playerLogo);
         squadLogoLabel.setUserData(squadLogo);
         teamLogoLabel.setUserData(teamLogo);
         clanLogoLabel.setUserData(clanLogo);
-        
+
         playerLogo.setUserData("C:\\Users\\TAVOS\\Documents\\NetBeansProjects\\CopaFF\\src\\copaff\\ui\\main\\user.png");
+        File file = new File("C:\\Users\\TAVOS\\Documents\\NetBeansProjects\\CopaFF\\src\\copaff\\ui\\main\\user.png");
+        String imageUrl;
+        try {
+            imageUrl = file.toURI().toURL().toExternalForm();
+            Image image = new Image(imageUrl);
+            playerLogo.setImage(image);
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(RegistrationController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public final void init() {
@@ -134,13 +145,17 @@ public class RegistrationController implements Initializable {
     private void handleRegisterPlayerAction(ActionEvent event) {
         String playerNameTmp = StringUtils.trimToEmpty(playerName.getText());
         String playerIDTmp = StringUtils.trimToEmpty(playerID.getText());
-        String playerCountryTmp = StringUtils.trimToEmpty(playerCountry.getEditor().getText());
 
-        if (playerNameTmp.isEmpty() || playerIDTmp.isEmpty() || playerCountryTmp.isEmpty()) {
+        if (playerNameTmp.isEmpty() || playerIDTmp.isEmpty() || playerCountry.getSelectionModel().isEmpty()) {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Insufficient Data", "Please enter data in all fields.");
             return;
         }
+        String playerCountryTmp = StringUtils.trimToEmpty(playerCountry.getSelectionModel().getSelectedItem().getName());
 
+        if (playerLogo.getImage() == null) {
+            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Insufficient Data", "Please select an image for the logo of this player.");
+            return;
+        }
         if (DataHelper.isPlayerExists(playerIDTmp)) {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Duplicate player id", "Player with same PlayerID exists.\nPlease use new ID");
             return;
@@ -155,13 +170,13 @@ public class RegistrationController implements Initializable {
             return;
         }
 
-        Player player = new Player(playerNameTmp, playerIDTmp, playerCountryTmp);
+        Player player = new Player(playerIDTmp, playerNameTmp, playerCountryTmp);
         boolean result = DataHelper.insertNewPlayer(player, fs, (int) f.length());
         if (result) {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "New player added", playerNameTmp + " has been added");
             playerName.clear();
             playerID.clear();
-            playerCountry.getEditor().clear();
+            playerCountry.getSelectionModel().clearSelection();
         } else {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Failed to add new player", "Check all the entries and try again");
         }
@@ -186,6 +201,11 @@ public class RegistrationController implements Initializable {
             return;
         }
 
+        if (squadLogo.getImage() == null) {
+            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Insufficient Data", "Please select an image for the logo of this squad.");
+            return;
+        }
+
         if (DataHelper.isSquadExists(squadIDTmp)) {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Duplicate squad id", "Squad with same squad ID exists.\nPlease use new ID");
             return;
@@ -200,9 +220,10 @@ public class RegistrationController implements Initializable {
             return;
         }
 
-        Squad squad = new Squad(squadNameTmp, squadIDTmp);
+        Squad squad = new Squad(squadIDTmp, squadNameTmp);
         boolean result = DataHelper.insertNewSquad(squad, fs, (int) f.length());
         if (result) {
+            DataHelper.createFixedSquadTable(squadIDTmp);
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "New squad added", squadNameTmp + " has been added");
             squadName.clear();
             squadID.clear();
@@ -221,6 +242,11 @@ public class RegistrationController implements Initializable {
             return;
         }
 
+        if (teamLogo.getImage() == null) {
+            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Insufficient Data", "Please select an image for the logo of this team.");
+            return;
+        }
+
         if (DataHelper.isClanExists(teamNameTmp)) {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Duplicate team id", "Team with same teamID exists.\nPlease use new ID");
             return;
@@ -235,7 +261,7 @@ public class RegistrationController implements Initializable {
             return;
         }
 
-        Team team = new Team(teamNameTmp, teamIDTmp);
+        Team team = new Team(teamIDTmp, teamNameTmp);
         boolean result = DataHelper.insertNewTeam(team, fs, (int) f.length());
         if (result) {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "New clan added", teamNameTmp + " has been added");
@@ -256,6 +282,11 @@ public class RegistrationController implements Initializable {
             return;
         }
 
+        if (clanLogo.getImage() == null) {
+            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Insufficient Data", "Please select an image for the logo of this clan.");
+            return;
+        }
+
         if (DataHelper.isClanExists(clanIDTmp)) {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Duplicate clan id", "Clan with same clanID exists.\nPlease use new ID");
             return;
@@ -270,7 +301,7 @@ public class RegistrationController implements Initializable {
             return;
         }
 
-        Clan clan = new Clan(clanNameTmp, clanIDTmp);
+        Clan clan = new Clan(clanIDTmp, clanNameTmp);
         boolean result = DataHelper.insertNewClan(clan, fs, (int) f.length());
         if (result) {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "New clan added", clanNameTmp + " has been added");
@@ -301,5 +332,4 @@ public class RegistrationController implements Initializable {
             }
         }
     }
-
 }

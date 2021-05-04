@@ -5,6 +5,7 @@
 <?import com.jfoenix.controls.JFXTextField?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
@@ -13,167 +14,171 @@
 
 <StackPane fx:id="rootPane" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="copaff.ui.registration.RegistrationController">
    <children>
-      <VBox fx:id="mainContainer" alignment="CENTER">
-         <children>
-            <VBox alignment="CENTER" spacing="5.0" VBox.vgrow="NEVER">
+      <ScrollPane>
+         <content>
+            <VBox fx:id="mainContainer" alignment="CENTER">
                <children>
+                  <HBox VBox.vgrow="NEVER">
+                     <children>
+                        <HBox alignment="CENTER" spacing="20.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <VBox alignment="CENTER" spacing="20.0" HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <JFXTextField fx:id="playerName" labelFloat="true" promptText="Name of Player:">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </JFXTextField>
+                                    <JFXTextField fx:id="playerID" labelFloat="true" layoutX="10.0" layoutY="10.0" promptText="ID of Player:">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </JFXTextField>
+                                    <JFXComboBox fx:id="playerCountry" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+                                    <HBox alignment="CENTER_RIGHT">
+                                       <children>
+                                          <JFXButton buttonType="RAISED" onAction="#handleRegisterPlayerAction" text="Register Player">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </JFXButton>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                              <Label fx:id="playerLogoLabel" alignment="CENTER" contentDisplay="CENTER" onMouseClicked="#handleUpload" text="Load Image">
+                                 <graphic>
+                                    <ImageView fx:id="playerLogo" fitHeight="150.0" fitWidth="200.0" onMouseClicked="#handleUpload" pickOnBounds="true" preserveRatio="true" />
+                                 </graphic>
+                              </Label>
+                           </children>
+                        </HBox>
+                     </children>
+                  </HBox>
                   <HBox alignment="CENTER" spacing="20.0" VBox.vgrow="ALWAYS">
                      <children>
-                        <VBox alignment="CENTER" spacing="20.0" HBox.hgrow="ALWAYS">
+                        <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                            <children>
-                              <JFXTextField fx:id="playerName" labelFloat="true" promptText="Name of Player:">
-                                 <font>
-                                    <Font name="System Bold" size="14.0" />
-                                 </font>
-                              </JFXTextField>
-                              <JFXTextField fx:id="playerID" labelFloat="true" layoutX="10.0" layoutY="10.0" promptText="ID of Player:">
-                                 <font>
-                                    <Font name="System Bold" size="14.0" />
-                                 </font>
-                              </JFXTextField>
+                              <VBox spacing="20.0">
+                                 <children>
+                                    <JFXTextField fx:id="squadName" labelFloat="true" promptText="Name of Squad:">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </JFXTextField>
+                                    <JFXTextField fx:id="squadID" labelFloat="true" promptText="ID of Squad:">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </JFXTextField>
+                                 </children>
+                              </VBox>
+                              <HBox alignment="CENTER_RIGHT">
+                                 <children>
+                                    <JFXButton fx:id="genSquadID" buttonType="RAISED" onAction="#handleGenerateIDAction" text="Generate Squad ID">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </JFXButton>
+                                    <JFXButton buttonType="RAISED" layoutX="209.0" layoutY="18.0" onAction="#handleRegisterSquadAction" text="Register Squad">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </JFXButton>
+                                 </children>
+                              </HBox>
                            </children>
                         </VBox>
-                        <VBox alignment="CENTER" spacing="20.0" HBox.hgrow="ALWAYS">
-                           <children>
-                              <JFXComboBox fx:id="playerCountry" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="Select Country..." />
-                              <JFXComboBox fx:id="playerSquad" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="Select Squad..." />
-                           </children>
-                        </VBox>
+                        <Label fx:id="squadLogoLabel" alignment="CENTER" contentDisplay="CENTER" onMouseClicked="#handleUpload" text="Load Image">
+                           <graphic>
+                              <ImageView fx:id="squadLogo" fitHeight="150.0" fitWidth="200.0" onMouseClicked="#handleUpload" pickOnBounds="true" preserveRatio="true" />
+                           </graphic>
+                        </Label>
                      </children>
                   </HBox>
-                  <HBox alignment="CENTER_RIGHT" VBox.vgrow="NEVER">
+                  <HBox spacing="20.0" VBox.vgrow="ALWAYS">
                      <children>
-                        <JFXButton fx:id="playerLogo" buttonType="RAISED" onAction="#handleRegisterPlayerAction" text="Register Player">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </JFXButton>
+                        <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <VBox spacing="20.0">
+                                 <children>
+                                    <JFXTextField fx:id="teamName" labelFloat="true" promptText="Name of Team:">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </JFXTextField>
+                                    <JFXTextField fx:id="teamID" labelFloat="true" promptText="ID of Team:">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </JFXTextField>
+                                 </children>
+                              </VBox>
+                              <HBox alignment="CENTER_RIGHT">
+                                 <children>
+                                    <JFXButton fx:id="genTeamID" buttonType="RAISED" onAction="#handleGenerateIDAction" text="Generate Team ID">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </JFXButton>
+                                    <JFXButton buttonType="RAISED" layoutX="209.0" layoutY="18.0" onAction="#handleRegisterTeamAction" text="Register Team">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </JFXButton>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                        <Label fx:id="teamLogoLabel" alignment="CENTER" contentDisplay="CENTER" onMouseClicked="#handleUpload" text="Load Image">
+                           <graphic>
+                              <ImageView fx:id="teamLogo" fitHeight="150.0" fitWidth="200.0" onMouseClicked="#handleUpload" pickOnBounds="true" preserveRatio="true" />
+                           </graphic>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <HBox spacing="20.0">
+                     <children>
+                        <VBox alignment="CENTER" spacing="5.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <VBox alignment="CENTER" spacing="20.0">
+                                 <children>
+                                    <JFXTextField fx:id="clanName" labelFloat="true" promptText="Name of Clan:">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </JFXTextField>
+                                    <JFXTextField fx:id="clanID" labelFloat="true" layoutX="10.0" layoutY="10.0" promptText="ID of Clan:">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </JFXTextField>
+                                 </children>
+                              </VBox>
+                              <HBox alignment="CENTER_RIGHT">
+                                 <children>
+                                    <JFXButton buttonType="RAISED" onAction="#handleRegisterClanAction" text="Register Clan">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </JFXButton>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                        <Label fx:id="clanLogoLabel" alignment="CENTER" contentDisplay="CENTER" onMouseClicked="#handleUpload" text="Load Image">
+                           <graphic>
+                              <ImageView fx:id="clanLogo" fitHeight="150.0" fitWidth="200.0" onMouseClicked="#handleUpload" pickOnBounds="true" preserveRatio="true" />
+                           </graphic>
+                        </Label>
                      </children>
                   </HBox>
                </children>
+               <padding>
+                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+               </padding>
             </VBox>
-            <HBox alignment="CENTER" spacing="20.0" VBox.vgrow="ALWAYS">
-               <children>
-                  <VBox spacing="5.0" HBox.hgrow="ALWAYS">
-                     <children>
-                        <VBox spacing="20.0">
-                           <children>
-                              <JFXTextField fx:id="squadName" labelFloat="true" promptText="Name of Squad:">
-                                 <font>
-                                    <Font name="System Bold" size="14.0" />
-                                 </font>
-                              </JFXTextField>
-                              <JFXTextField fx:id="squadID" labelFloat="true" promptText="ID of Squad:">
-                                 <font>
-                                    <Font name="System Bold" size="14.0" />
-                                 </font>
-                              </JFXTextField>
-                           </children>
-                        </VBox>
-                        <HBox alignment="CENTER_RIGHT">
-                           <children>
-                              <JFXButton fx:id="genSquadID" buttonType="RAISED" onAction="#handleGenerateIDAction" text="Generate Squad ID">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </JFXButton>
-                              <JFXButton buttonType="RAISED" layoutX="209.0" layoutY="18.0" onAction="#handleRegisterSquadAction" text="Register Squad">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </JFXButton>
-                           </children>
-                        </HBox>
-                     </children>
-                  </VBox>
-                  <Label fx:id="squadLogoLabel" alignment="CENTER" contentDisplay="CENTER" onMouseClicked="#handleUpload" text="Load Image">
-                     <graphic>
-                        <ImageView fx:id="squadLogo" fitHeight="150.0" fitWidth="200.0" onMouseClicked="#handleUpload" pickOnBounds="true" preserveRatio="true" />
-                     </graphic>
-                  </Label>
-               </children>
-            </HBox>
-            <HBox spacing="20.0" VBox.vgrow="ALWAYS">
-               <children>
-                  <VBox spacing="5.0" HBox.hgrow="ALWAYS">
-                     <children>
-                        <VBox spacing="20.0">
-                           <children>
-                              <JFXTextField fx:id="teamName" labelFloat="true" promptText="Name of Team:">
-                                 <font>
-                                    <Font name="System Bold" size="14.0" />
-                                 </font>
-                              </JFXTextField>
-                              <JFXTextField fx:id="teamID" labelFloat="true" promptText="ID of Team:">
-                                 <font>
-                                    <Font name="System Bold" size="14.0" />
-                                 </font>
-                              </JFXTextField>
-                           </children>
-                        </VBox>
-                        <HBox alignment="CENTER_RIGHT">
-                           <children>
-                              <JFXButton fx:id="genTeamID" buttonType="RAISED" onAction="#handleGenerateIDAction" text="Generate Team ID">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </JFXButton>
-                              <JFXButton buttonType="RAISED" layoutX="209.0" layoutY="18.0" onAction="#handleRegisterTeamAction" text="Register Team">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </JFXButton>
-                           </children>
-                        </HBox>
-                     </children>
-                  </VBox>
-                  <Label fx:id="teamLogoLabel" alignment="CENTER" contentDisplay="CENTER" onMouseClicked="#handleUpload" text="Load Image">
-                     <graphic>
-                        <ImageView fx:id="teamLogo" fitHeight="150.0" fitWidth="200.0" onMouseClicked="#handleUpload" pickOnBounds="true" preserveRatio="true" />
-                     </graphic>
-                  </Label>
-               </children>
-            </HBox>
-            <HBox spacing="20.0">
-               <children>
-                  <VBox alignment="CENTER" spacing="5.0" HBox.hgrow="ALWAYS">
-                     <children>
-                        <VBox alignment="CENTER" spacing="20.0">
-                           <children>
-                              <JFXTextField fx:id="clanName" labelFloat="true" promptText="Name of Clan:">
-                                 <font>
-                                    <Font name="System Bold" size="14.0" />
-                                 </font>
-                              </JFXTextField>
-                              <JFXTextField fx:id="clanID" labelFloat="true" layoutX="10.0" layoutY="10.0" promptText="ID of Clan:">
-                                 <font>
-                                    <Font name="System Bold" size="14.0" />
-                                 </font>
-                              </JFXTextField>
-                           </children>
-                        </VBox>
-                        <HBox alignment="CENTER_RIGHT">
-                           <children>
-                              <JFXButton buttonType="RAISED" onAction="#handleRegisterClanAction" text="Register Clan">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </JFXButton>
-                           </children>
-                        </HBox>
-                     </children>
-                  </VBox>
-                  <Label fx:id="clanLogoLabel" alignment="CENTER" contentDisplay="CENTER" onMouseClicked="#handleUpload" text="Load Image">
-                     <graphic>
-                        <ImageView fx:id="clanLogo" fitHeight="150.0" fitWidth="200.0" onMouseClicked="#handleUpload" pickOnBounds="true" preserveRatio="true" />
-                     </graphic>
-                  </Label>
-               </children>
-            </HBox>
-         </children>
-         <padding>
-            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-         </padding>
-      </VBox>
+         </content>
+      </ScrollPane>
    </children>
 </StackPane>

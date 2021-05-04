@@ -24,7 +24,7 @@
                   <Font size="14.0" />
                </font>
             </JFXButton>
-            <JFXButton buttonType="RAISED" ripplerFill="#c0e80f" text="Info" VBox.vgrow="ALWAYS">
+            <JFXButton buttonType="RAISED" onAction="#handleLinkAction" ripplerFill="#c0e80f" text="Link" VBox.vgrow="ALWAYS">
                <font>
                   <Font size="14.0" />
                </font>

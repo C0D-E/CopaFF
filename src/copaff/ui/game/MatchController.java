@@ -5,8 +5,6 @@
  */
 package copaff.ui.game;
 
-import copaff.alert.AlertMaker;
-import copaff.database.DataHelper;
 import copaff.database.DatabaseHandler;
 import copaff.model.Player;
 import copaff.model.Squad;
@@ -17,17 +15,20 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import masktextfield.MaskTextField;
+import squadcard.SquadCard;
 
 /**
  * FXML Controller class
@@ -35,6 +36,9 @@ import masktextfield.MaskTextField;
  * @author TAVOS
  */
 public class MatchController implements Initializable {
+
+    private ObservableList<SquadCard> cards = FXCollections.observableArrayList();
+    ;
 
     @FXML
     private ChoiceBox<Scrimmage> scrimList;
@@ -58,13 +62,14 @@ public class MatchController implements Initializable {
     private StackPane rootPane;
     @FXML
     private VBox mainContainer;
+    @FXML
+    private ChoiceBox<SquadCard> cardList;
 
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
         DatabaseHandler handler = DatabaseHandler.getInstance();
         String qu = "SELECT * FROM SCRIMMAGE";
         ResultSet rs = handler.execQuery(qu);
@@ -171,6 +176,8 @@ public class MatchController implements Initializable {
             player3.getItems().remove(newValue);
         });
 
+        cardList.setItems(cards);
+
     }
 
     @FXML
@@ -185,6 +192,55 @@ public class MatchController implements Initializable {
         int squadPositionTmp = Integer.valueOf(squadPosition.getText());
         squadPositionTmp += 1;
         squadPosition.setText(String.valueOf(squadPositionTmp));
+    }
+
+    @FXML
+    private void handleRemoveCardAction(ActionEvent event) {
+        SquadCard squadCard = cardList.getSelectionModel().getSelectedItem();
+        cards.remove(squadCard);
+        evenSquadPositions.getChildren().remove(squadCard);
+        oddSquadPositions.getChildren().remove(squadCard);
+
+    }
+
+    @FXML
+    private void handleAddSquadToMatchAction(ActionEvent event) {
+        SquadCard card = new SquadCard();
+
+        card.setSquadInGamePosition(Integer.valueOf(squadPosition.getText()));
+        Squad squad = squadList.getSelectionModel().getSelectedItem();
+        card.setSquadName(squad.getName());
+        card.setSquadID(squad.getId());
+
+        Player player1Tmp = player1.getSelectionModel().getSelectedItem();
+        card.setPlayer1Name(player1Tmp.getName());
+        Player player2Tmp = player2.getSelectionModel().getSelectedItem();
+        card.setPlayer2Name(player2Tmp.getName());
+        Player player3Tmp = player3.getSelectionModel().getSelectedItem();
+        card.setPlayer3Name(player3Tmp.getName());
+        Player player4Tmp = player4.getSelectionModel().getSelectedItem();
+        card.setPlayer4Name(player4Tmp.getName());
+
+        try {
+            String checkstmt = "SELECT logo FROM SQUAD WHERE id=?";
+            PreparedStatement stmt = DatabaseHandler.getInstance().getConnection().prepareStatement(checkstmt);
+            stmt.setString(1, squad.getId());
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                Image squadLogo = new Image(rs.getBinaryStream("logo"));
+                card.setSquadLogo(squadLogo);
+            }
+        } catch (SQLException ex) {
+            java.util.logging.Logger.getLogger(LinkController.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+
+        cards.add(card);
+
+        if (Integer.valueOf(squadPosition.getText()) % 2 == 0) {
+            evenSquadPositions.getChildren().add(card);
+        } else {
+            oddSquadPositions.getChildren().add(card);
+        }
     }
 
 }

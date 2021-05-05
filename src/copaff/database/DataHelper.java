@@ -34,8 +34,7 @@ public class DataHelper {
      */
     public static boolean createTable(String tableType, String tableName) {
         try {
-            String sql = "CREATE TABLE " + tableType + tableName.replaceAll("-", "") + " (\n"
-                    + "	playerID varchar(200) primary key)";
+            String sql = "CREATE TABLE " + tableType + tableName.replaceAll("-", "") + " (playerID varchar(200) primary key)";
             //+ "FOREIGN KEY (playerID) REFERENCES PLAYER(id))";
             PreparedStatement statement = DatabaseHandler.getInstance().getConnection().prepareStatement(sql);
             return statement.executeUpdate() > 0;
@@ -59,7 +58,7 @@ public class DataHelper {
 
     public static boolean isPlayerExistsInTable(String tableType, String tableName, String playerID) {
         try {
-            String checkstmt = "SELECT COUNT(*) FROM " + tableType + tableName.replaceAll("-", "") + " WHERE id=?";
+            String checkstmt = "SELECT COUNT(*) FROM " + tableType + tableName.replaceAll("-", "") + " WHERE playerID=?";
             PreparedStatement stmt = DatabaseHandler.getInstance().getConnection().prepareStatement(checkstmt);
             stmt.setString(1, playerID);
             ResultSet rs = stmt.executeQuery();

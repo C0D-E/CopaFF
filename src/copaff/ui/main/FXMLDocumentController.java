@@ -49,7 +49,7 @@ public class FXMLDocumentController implements Initializable {
 
     }
     @FXML
-    private void handleTableAction(ActionEvent event) {
+    private void handleMatchAction(ActionEvent event) {
         try {
             ScrollPane table = FXMLLoader.load(getClass().getResource("/copaff/ui/game/match.fxml"));
             FadeTransition ft = new FadeTransition(Duration.millis(transitionMilis), table);

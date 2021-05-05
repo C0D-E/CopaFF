@@ -19,7 +19,7 @@
                   <Font size="14.0" />
                </font>
             </JFXButton>
-            <JFXButton buttonType="RAISED" ripplerFill="#c0e80f" text="Tabla" VBox.vgrow="ALWAYS">
+            <JFXButton buttonType="RAISED" onAction="#handleMatchAction" ripplerFill="#c0e80f" text="Match" VBox.vgrow="ALWAYS">
                <font>
                   <Font size="14.0" />
                </font>

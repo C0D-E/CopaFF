@@ -17,6 +17,9 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -30,22 +33,24 @@ import org.apache.commons.lang3.StringUtils;
  * @author TAVOS
  */
 public class LinkController implements Initializable {
+    
+    ObservableList<Player> players = FXCollections.observableArrayList();
 
     @FXML
     private JFXComboBox<Squad> squadName;
     @FXML
-    private JFXComboBox<Player> selectorPlayer1;
-    @FXML
     private StackPane rootPane;
     @FXML
     private VBox mainContainer;
+    @FXML
+    private JFXComboBox<Player> selectorPlayer;
 
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
+        
         DatabaseHandler handler = DatabaseHandler.getInstance();
         String qu = "SELECT * FROM SQUAD";
         ResultSet rs = handler.execQuery(qu);
@@ -60,18 +65,20 @@ public class LinkController implements Initializable {
         }
 
         squadName.valueProperty().addListener((observable, oldValue, newValue) -> {
+            selectorPlayer.getItems().clear();
             DatabaseHandler dbHandler = DatabaseHandler.getInstance();
             String query = "SELECT * FROM PLAYER";
             ResultSet resulSet = dbHandler.execQuery(query);
             try {
-                while (rs.next()) {
+                while (resulSet.next()) {
                     String playerId = resulSet.getString("id");
                     String playerName = resulSet.getString("name");
                     String playerCountry = resulSet.getString("country");
                     LocalDateTime created = resulSet.getTimestamp("created").toLocalDateTime();
                     Player player = new Player(playerId, playerName, playerCountry, created);
-                    if (!DataHelper.isPlayerExistsInTable("SQUAD", newValue.getId(), playerId)) {
-                        selectorPlayer1.getItems().add(player);
+                    boolean result = DataHelper.isPlayerExistsInTable("SQUAD", newValue.getId(), playerId);
+                    if (!result) {
+                        selectorPlayer.getItems().add(player);
                     }
                 }
             } catch (SQLException ex) {
@@ -82,14 +89,14 @@ public class LinkController implements Initializable {
 
     @FXML
     public void assign(ActionEvent event) {
-        if (squadName.getSelectionModel().isEmpty() || selectorPlayer1.getSelectionModel().isEmpty()) {
+        if (squadName.getSelectionModel().isEmpty() || selectorPlayer.getSelectionModel().isEmpty()) {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Insufficient Data", "Please enter data in all fields.");
             return;
         }
 
         Squad squad = squadName.getSelectionModel().getSelectedItem();
         String squadID = StringUtils.trimToEmpty(squad.getId());
-        Player player = selectorPlayer1.getSelectionModel().getSelectedItem();
+        Player player = selectorPlayer.getSelectionModel().getSelectedItem();
 
         if (DataHelper.isPlayerExistsInTable("SQUAD", squadID, player.getId())) {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Data assign", "Player " + player.getName() + " is already assiggned in squad " + squad.getName());

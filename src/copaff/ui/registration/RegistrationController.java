@@ -304,9 +304,8 @@ public class RegistrationController implements Initializable {
 
         Squad squad = new Squad(squadIDTmp, squadNameTmp);
         boolean result = DataHelper.insertNewSquad(squad, fs, (int) f.length());
-        result = result || DataHelper.createTable("SQUAD", squadIDTmp);
-        if (result) {
-
+        boolean result1 = DataHelper.createTable("SQUAD", squad.getId());
+        if (result || result1) {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "New squad added", squadNameTmp + " has been added");
             squadName.clear();
             squadID.clear();

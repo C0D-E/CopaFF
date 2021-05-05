@@ -77,4 +77,10 @@ public class Scrimmage {
     public LocalDateTime getCreated() {
         return created;
     }
+
+    @Override
+    public String toString() {
+        return getMap() + " - " + getCustomRoomID();
+    }
+
 }

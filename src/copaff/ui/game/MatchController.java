@@ -6,6 +6,7 @@
 package copaff.ui.game;
 
 import com.jfoenix.controls.JFXComboBox;
+import copaff.database.DataHelper;
 import copaff.database.DatabaseHandler;
 import copaff.model.Player;
 import copaff.model.Squad;
@@ -72,7 +73,7 @@ public class MatchController implements Initializable {
         } catch (SQLException ex) {
             java.util.logging.Logger.getLogger(LinkController.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        
+
         handler = DatabaseHandler.getInstance();
         qu = "SELECT * FROM SQUAD";
         rs = handler.execQuery(qu);
@@ -85,6 +86,33 @@ public class MatchController implements Initializable {
         } catch (SQLException ex) {
             java.util.logging.Logger.getLogger(LinkController.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+
+        squadList.valueProperty().addListener((observable, oldValue, newValue) -> {
+            player1.getItems().clear();
+            player2.getItems().clear();
+            player3.getItems().clear();
+            player4.getItems().clear();
+            DatabaseHandler dbHandler = DatabaseHandler.getInstance();
+            String query = "SELECT * FROM PLAYER";
+            ResultSet resulSet = dbHandler.execQuery(query);
+            try {
+                while (resulSet.next()) {
+                    String playerId = resulSet.getString("id");
+                    String playerName = resulSet.getString("name");
+                    String playerCountry = resulSet.getString("country");
+                    LocalDateTime created = resulSet.getTimestamp("created").toLocalDateTime();
+                    Player player = new Player(playerId, playerName, playerCountry, created);
+                    if (!DataHelper.isPlayerExistsInTable("SQUAD", newValue.getId(), playerId)) {
+                        player1.getItems().add(player);
+                        player2.getItems().add(player);
+                        player3.getItems().add(player);
+                        player4.getItems().add(player);
+                    }
+                }
+            } catch (SQLException ex) {
+                java.util.logging.Logger.getLogger(LinkController.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            }
+        });
 
     }
 

@@ -5,7 +5,6 @@
  */
 package copaff.model;
 
-import java.sql.Blob;
 import java.time.LocalDateTime;
 
 /**
@@ -22,14 +21,14 @@ public class Player {
     public Player() {
     }
 
-    public Player(String name, String id, String country) {
+    public Player(String id, String name, String country) {
         this.id = id;
         this.name = name;
         this.country = country;
         this.created = LocalDateTime.now();
     }
 
-    public Player(String name, String id, String country, LocalDateTime created) {
+    public Player(String id, String name, String country, LocalDateTime created) {
         this.id = id;
         this.name = name;
         this.country = country;
@@ -81,6 +80,6 @@ public class Player {
 
     @Override
     public String toString() {
-        return name + " - " + id;
+        return getName() + " - " + getId();
     }
 }

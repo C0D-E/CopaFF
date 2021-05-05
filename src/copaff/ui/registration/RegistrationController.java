@@ -256,8 +256,8 @@ public class RegistrationController implements Initializable {
         boolean result = DataHelper.insertNewPlayer(player, fs, (int) f.length());
         if (result) {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "New player added", playerNameTmp + " has been added");
-            playerName.clear();
             playerID.clear();
+            playerName.clear();
             playerCountry.getSelectionModel().clearSelection();
         } else {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Failed to add new player", "Check all the entries and try again");
@@ -293,7 +293,7 @@ public class RegistrationController implements Initializable {
             return;
         }
 
-        File f = new File((String) squadLogoLabel.getUserData());
+        File f = new File((String) squadLogo.getUserData());
         FileInputStream fs = null;
         try {
             fs = new FileInputStream(f);
@@ -309,6 +309,7 @@ public class RegistrationController implements Initializable {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "New squad added", squadNameTmp + " has been added");
             squadName.clear();
             squadID.clear();
+            squadLogo.setImage(null);
         } else {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Failed to add new squad", "Check all the entries and try again");
         }
@@ -334,7 +335,7 @@ public class RegistrationController implements Initializable {
             return;
         }
 
-        File f = new File((String) teamLogoLabel.getUserData());
+        File f = new File((String) teamLogo.getUserData());
         FileInputStream fs = null;
         try {
             fs = new FileInputStream(f);
@@ -350,6 +351,7 @@ public class RegistrationController implements Initializable {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "New clan added", teamNameTmp + " has been added");
             teamName.clear();
             teamID.clear();
+            teamLogo.setImage(null);
         } else {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Failed to add new clan", "Check all the entries and try again");
         }
@@ -375,7 +377,7 @@ public class RegistrationController implements Initializable {
             return;
         }
 
-        File f = new File((String) clanLogoLabel.getUserData());
+        File f = new File((String) clanLogo.getUserData());
         FileInputStream fs = null;
         try {
             fs = new FileInputStream(f);
@@ -391,6 +393,7 @@ public class RegistrationController implements Initializable {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "New clan added", clanNameTmp + " has been added");
             clanName.clear();
             clanID.clear();
+            clanLogo.setImage(null);
         } else {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Failed to add new clan", "Check all the entries and try again");
         }
@@ -409,8 +412,9 @@ public class RegistrationController implements Initializable {
             try {
                 String imageUrl = file.toURI().toURL().toExternalForm();
                 Image image = new Image(imageUrl);
-                ((ImageView) logo.getUserData()).setImage(image);
-                logo.setUserData(imageUrl.replaceAll("file:/", ""));
+                ImageView logoView = (ImageView) logo.getUserData();
+                logoView.setImage(image);
+                logoView.setUserData(imageUrl.replaceAll("file:/", ""));
             } catch (MalformedURLException ex) {
                 throw new IllegalStateException(ex);
             }

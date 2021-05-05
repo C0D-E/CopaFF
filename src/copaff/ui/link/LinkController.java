@@ -76,8 +76,7 @@ public class LinkController implements Initializable {
                     String playerCountry = resulSet.getString("country");
                     LocalDateTime created = resulSet.getTimestamp("created").toLocalDateTime();
                     Player player = new Player(playerId, playerName, playerCountry, created);
-                    boolean result = DataHelper.isPlayerExistsInTable("SQUAD", newValue.getId(), playerId);
-                    if (!result) {
+                    if (!DataHelper.isPlayerExistsInTable("SQUAD", newValue.getId(), playerId)) {
                         selectorPlayer.getItems().add(player);
                     }
                 }

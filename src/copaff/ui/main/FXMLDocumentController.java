@@ -19,6 +19,7 @@ import javafx.scene.effect.GaussianBlur;
 import javafx.scene.layout.BorderPane;
 import javafx.util.Duration;
 import static copaff.ui.main.CopaFF.*;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 
@@ -41,6 +42,21 @@ public class FXMLDocumentController implements Initializable {
             ft.setToValue(1.0);
             ft.play();
             mainBorderPane.setCenter(registration);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            handleError(Alert.AlertType.ERROR, ex, "It was unable to load the Registration Form", ButtonType.OK);
+        }
+
+    }
+    @FXML
+    private void handleTableAction(ActionEvent event) {
+        try {
+            ScrollPane table = FXMLLoader.load(getClass().getResource("/copaff/ui/game/match.fxml"));
+            FadeTransition ft = new FadeTransition(Duration.millis(transitionMilis), table);
+            ft.setFromValue(0.1);
+            ft.setToValue(1.0);
+            ft.play();
+            mainBorderPane.setCenter(table);
         } catch (IOException ex) {
             ex.printStackTrace();
             handleError(Alert.AlertType.ERROR, ex, "It was unable to load the Registration Form", ButtonType.OK);

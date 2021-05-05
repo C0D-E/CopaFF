@@ -10,10 +10,13 @@ import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextField;
 import copaff.alert.AlertMaker;
 import copaff.database.DataHelper;
+import copaff.database.DatabaseHandler;
 import copaff.model.Clan;
 import copaff.model.Player;
 import copaff.model.Squad;
 import copaff.model.Team;
+import copaff.model.match_modes.Scrimmage;
+import copaff.ui.link.LinkController;
 import copaff.util.CountriesFetcher;
 import copaff.util.Country;
 import copaff.util.LoadCountryFlags;
@@ -23,6 +26,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -42,6 +48,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import masktextfield.MaskTextField;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -96,6 +103,18 @@ public class RegistrationController implements Initializable {
     private Label clanLogoLabel;
     @FXML
     private Label playerLogoLabel;
+    @FXML
+    private JFXTextField scrimmageID;
+    @FXML
+    private JFXComboBox<String> maps;
+    @FXML
+    private JFXComboBox<Player> playerCreatorList;
+    @FXML
+    private MaskTextField scrimBlock;
+    @FXML
+    private JFXTextField customRoomID;
+    @FXML
+    private JFXButton genScrimID;
 
     /**
      * Initializes the controller class.
@@ -116,6 +135,7 @@ public class RegistrationController implements Initializable {
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
+        genScrimID.setUserData(scrimmageID);
         genSquadID.setUserData(squadID);
         genTeamID.setUserData(teamID);
 
@@ -134,11 +154,73 @@ public class RegistrationController implements Initializable {
         } catch (MalformedURLException ex) {
             Logger.getLogger(RegistrationController.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+        maps.getItems().add("Bermuda");
+        maps.getItems().add("Bermuda Remasterizada");
+        maps.getItems().add("Purgatorio");
+        maps.getItems().add("Kalahari");
+
+        DatabaseHandler handler = DatabaseHandler.getInstance();
+        String qu = "SELECT * FROM PLAYER";
+        ResultSet rs = handler.execQuery(qu);
+        try {
+            while (rs.next()) {
+                Player player = new Player(rs.getString("id"), rs.getString("name"),
+                        rs.getString("country"), rs.getTimestamp("created").toLocalDateTime());
+                playerCreatorList.getItems().add(player);
+            }
+        } catch (SQLException ex) {
+            java.util.logging.Logger.getLogger(LinkController.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
     }
 
     public final void init() {
         playerCountry.getItems().addAll(countries);
         playerCountry.setCellFactory((ListView<Country> p) -> new CountryCellView());
+    }
+
+    @FXML
+    private void handleMinusAction(ActionEvent event) {
+        int block = Integer.valueOf(scrimBlock.getText());
+        block -= 1;
+        scrimBlock.setText(String.valueOf(block));
+
+    }
+
+    @FXML
+    private void handlePlusAction(ActionEvent event) {
+        int block = Integer.valueOf(scrimBlock.getText());
+        block += 1;
+        scrimBlock.setText(String.valueOf(block));
+    }
+
+    @FXML
+    private void handleRegisterScrimmageAction(ActionEvent event) {
+        String customRoomIDTmp = StringUtils.trimToEmpty(customRoomID.getText());
+        String scrimmageIDTmp = StringUtils.trimToEmpty(scrimmageID.getText());
+        String scrimBlockTmp = StringUtils.trimToEmpty(scrimBlock.getText());
+
+        if (customRoomIDTmp.isEmpty() || scrimmageIDTmp.isEmpty() || scrimBlockTmp.isEmpty()
+                || maps.getSelectionModel().isEmpty() || playerCreatorList.getSelectionModel().isEmpty()) {
+            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Insufficient Data", "Please enter data in all fields.");
+            return;
+        }
+
+        String map = StringUtils.trimToEmpty(maps.getSelectionModel().getSelectedItem());
+        String playerCreatorID = StringUtils.trimToEmpty(playerCreatorList.getSelectionModel().getSelectedItem().getId());
+
+        Scrimmage scrim = new Scrimmage(scrimmageIDTmp, customRoomIDTmp, playerCreatorID, map, Integer.parseInt(scrimBlockTmp));
+        boolean result = DataHelper.insertNewScrimmage(scrim);
+        if (result) {
+            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "New Scrimmage added", "Scrim with Custom ROom ID: "+customRoomIDTmp + " has been added");
+            customRoomID.clear();
+            scrimmageID.clear();
+            scrimBlock.setText(String.valueOf(1));
+            playerCreatorList.getSelectionModel().clearSelection();
+            maps.getSelectionModel().clearSelection();
+        } else {
+            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Failed to add new Scrimmage", "Check all the entries and try again");
+        }
     }
 
     @FXML
@@ -222,8 +304,9 @@ public class RegistrationController implements Initializable {
 
         Squad squad = new Squad(squadIDTmp, squadNameTmp);
         boolean result = DataHelper.insertNewSquad(squad, fs, (int) f.length());
+        result = result || DataHelper.createTable("SQUAD", squadIDTmp);
         if (result) {
-            DataHelper.createFixedSquadTable(squadIDTmp);
+
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "New squad added", squadNameTmp + " has been added");
             squadName.clear();
             squadID.clear();
@@ -263,6 +346,7 @@ public class RegistrationController implements Initializable {
 
         Team team = new Team(teamIDTmp, teamNameTmp);
         boolean result = DataHelper.insertNewTeam(team, fs, (int) f.length());
+        result = result || DataHelper.createTable("TEAM", teamIDTmp);
         if (result) {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "New clan added", teamNameTmp + " has been added");
             teamName.clear();
@@ -303,6 +387,7 @@ public class RegistrationController implements Initializable {
 
         Clan clan = new Clan(clanIDTmp, clanNameTmp);
         boolean result = DataHelper.insertNewClan(clan, fs, (int) f.length());
+        result = result || DataHelper.createTable("CLAN", clanIDTmp);
         if (result) {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "New clan added", clanNameTmp + " has been added");
             clanName.clear();

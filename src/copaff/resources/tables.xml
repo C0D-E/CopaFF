@@ -7,6 +7,6 @@
     <table-entry name="CLAN" col-data="id varchar(200) primary key,name varchar(200),logo blob"/>
     <table-entry name="FIXEDSQUAD" col-data="playerID varchar(200) primary key,FOREIGN KEY (playerID) REFERENCES PLAYER(id)"/>
     <table-entry name="SQUADALTERNATE" col-data="playerID varchar(200) primary key,FOREIGN KEY (playerID) REFERENCES PLAYER(id)"/>
-    <table-entry name="SCRIMMAGE" col-data="id varchar(200) primary key,creatorID varchar(200),map varchar(20),block int,created timestamp,FOREIGN KEY (creatorID) REFERENCES PLAYER(id)"/>
+    <table-entry name="SCRIMMAGE" col-data="id varchar(200) primary key,customRoomID varchar(200),creatorID varchar(200),map varchar(20),block int,created timestamp,FOREIGN KEY (creatorID) REFERENCES PLAYER(id)"/>
     <table-entry name="GAME" col-data="playerID varchar(200) primary key,kills int,position int,FOREIGN KEY (playerID) REFERENCES PLAYER(id)"/>
 </tables>

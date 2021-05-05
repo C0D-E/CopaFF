@@ -26,11 +26,17 @@ public class DataHelper {
 
     private final static Logger LOGGER = LogManager.getLogger(DatabaseHandler.class.getName());
 
-    public static boolean createFixedSquadTable(String tableName) {
+    /**
+     * @param tableType Type of table to create: CLAN, TEAM, SQUAD or other type
+     * that has its ID as name and playerID as data.
+     * @param tableName Name of the table, usually the ID of the Type of table
+     * @return
+     */
+    public static boolean createTable(String tableType, String tableName) {
         try {
-            String sql = "CREATE TABLE SQUAD" + tableName.replaceAll("-", "") + " (\n"
+            String sql = "CREATE TABLE " + tableType + tableName.replaceAll("-", "") + " (\n"
                     + "	playerID varchar(200) primary key)";
-                    //+ "FOREIGN KEY (playerID) REFERENCES PLAYER(id))";
+            //+ "FOREIGN KEY (playerID) REFERENCES PLAYER(id))";
             PreparedStatement statement = DatabaseHandler.getInstance().getConnection().prepareStatement(sql);
             return statement.executeUpdate() > 0;
         } catch (SQLException ex) {
@@ -39,11 +45,11 @@ public class DataHelper {
         return false;
     }
 
-    public static boolean insertPLayerInFixedSquad(String tableName, Player player) {
+    public static boolean insertPLayerInTable(String tableType, String tableName, String playerID) {
         try {
             PreparedStatement statement = DatabaseHandler.getInstance().getConnection().prepareStatement(
-                    "INSERT INTO SQUAD" + tableName.replaceAll("-", "") + "(playerID) VALUES(?)");
-            statement.setString(1, player.getId());
+                    "INSERT INTO " + tableType + tableName.replaceAll("-", "") + "(playerID) VALUES(?)");
+            statement.setString(1, playerID);
             return statement.executeUpdate() > 0;
         } catch (SQLException ex) {
             LOGGER.log(Level.ERROR, "{}", ex);
@@ -51,11 +57,11 @@ public class DataHelper {
         return false;
     }
 
-    public static boolean isPlayerExistsInFixedSquad(String tableName, String id) {
+    public static boolean isPlayerExistsInTable(String tableType, String tableName, String playerID) {
         try {
-            String checkstmt = "SELECT COUNT(*) FROM SQUAD" + tableName.replaceAll("-", "") + " WHERE id=?";
+            String checkstmt = "SELECT COUNT(*) FROM " + tableType + tableName.replaceAll("-", "") + " WHERE id=?";
             PreparedStatement stmt = DatabaseHandler.getInstance().getConnection().prepareStatement(checkstmt);
-            stmt.setString(1, id);
+            stmt.setString(1, playerID);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 int count = rs.getInt(1);
@@ -129,12 +135,13 @@ public class DataHelper {
     public static boolean insertNewScrimmage(Scrimmage scrimmage) {
         try {
             PreparedStatement statement = DatabaseHandler.getInstance().getConnection().prepareStatement(
-                    "INSERT INTO SCRIMMAGE(id,creatorID,map,group,created) VALUES(?,?,?,?,?)");
+                    "INSERT INTO SCRIMMAGE(id,customRoomID,creatorID,map,block,created) VALUES(?,?,?,?,?,?)");
             statement.setString(1, scrimmage.getId());
-            statement.setString(2, scrimmage.getCreatorId());
-            statement.setString(3, scrimmage.getMap());
-            statement.setInt(4, scrimmage.getBlock());
-            statement.setTimestamp(5, Timestamp.valueOf(scrimmage.getCreated()));
+            statement.setString(2, scrimmage.getCustomRoomID());
+            statement.setString(3, scrimmage.getCreatorId());
+            statement.setString(4, scrimmage.getMap());
+            statement.setInt(5, scrimmage.getBlock());
+            statement.setTimestamp(6, Timestamp.valueOf(scrimmage.getCreated()));
             return statement.executeUpdate() > 0;
         } catch (SQLException ex) {
             LOGGER.log(Level.ERROR, "{}", ex);

@@ -6,7 +6,7 @@ import copaff.model.Squad;
 import copaff.model.Team;
 import copaff.model.match_modes.Scrimmage;
 import copaff.model.relations.FixedSquad;
-import copaff.model.relations.Game;
+import copaff.model.relations.Match;
 import copaff.model.relations.SquadAlternate;
 import java.io.FileInputStream;
 import java.sql.PreparedStatement;
@@ -160,13 +160,40 @@ public class DataHelper {
         return false;
     }
 
-    public static boolean insertNewMatch(Game match) {
+    public static boolean createMatchTable(String tableName) {
+        try {
+            String sql = "CREATE TABLE MATCH" + tableName.replaceAll("-", "")
+                    + " (cardID varchar(200) primary key, squadInGamePosition int"
+                    + ", squadID varchar(200), player1ID varchar(200),"
+                    + " player2ID varchar(200), player3ID varchar(200),"
+                    + " player4ID varchar(200), player1Kills int, player2Kills int,"
+                    + " player3Kills int, player4Kills int, finalSquadPosition int)";
+            PreparedStatement statement = DatabaseHandler.getInstance().getConnection().prepareStatement(sql);
+            return statement.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            LOGGER.log(Level.ERROR, "{}", ex);
+        }
+        return false;
+    }
+
+    public static boolean insertNewMatch(Match match) {
         try {
             PreparedStatement statement = DatabaseHandler.getInstance().getConnection().prepareStatement(
-                    "INSERT INTO MATCH(playerID, kills, position) VALUES(?,?,?)");
-            statement.setString(1, match.getPlayerId());
-            statement.setInt(2, match.getKills());
-            statement.setInt(3, match.getPosition());
+                    "INSERT INTO MATCH(cardID, squadInGamePosition, squadID, player1ID, player2ID,"
+                    + "player3ID, player4ID, player1Kills, player2Kills, player3Kills,"
+                    + "player4Kills, finalSquadPosition) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)");
+            statement.setString(1, match.getCardID());
+            statement.setInt(2, match.getSquadInGamePosition());
+            statement.setString(3, match.getSquadID());
+            statement.setString(4, match.getPlayer1ID());
+            statement.setString(5, match.getPlayer2ID());
+            statement.setString(6, match.getPlayer3ID());
+            statement.setString(7, match.getPlayer4ID());
+            statement.setInt(8, match.getPlayer1Kills());
+            statement.setInt(9, match.getPlayer2Kills());
+            statement.setInt(10, match.getPlayer3Kills());
+            statement.setInt(11, match.getPlayer4Kills());
+            statement.setInt(12, match.getFinalSquadPosition());
             return statement.executeUpdate() > 0;
         } catch (SQLException ex) {
             LOGGER.log(Level.ERROR, "{}", ex);

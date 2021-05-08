@@ -211,8 +211,9 @@ public class RegistrationController implements Initializable {
 
         Scrimmage scrim = new Scrimmage(scrimmageIDTmp, customRoomIDTmp, playerCreatorID, map, Integer.parseInt(scrimBlockTmp));
         boolean result = DataHelper.insertNewScrimmage(scrim);
-        if (result) {
-            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "New Scrimmage added", "Scrim with Custom ROom ID: "+customRoomIDTmp + " has been added");
+        boolean result1 = DataHelper.createMatchTable(scrimmageIDTmp);
+        if (result || result1) {
+            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "New Scrimmage added", "Scrim with Custom ROom ID: " + customRoomIDTmp + " has been added");
             customRoomID.clear();
             scrimmageID.clear();
             scrimBlock.setText(String.valueOf(1));
@@ -304,7 +305,7 @@ public class RegistrationController implements Initializable {
 
         Squad squad = new Squad(squadIDTmp, squadNameTmp);
         boolean result = DataHelper.insertNewSquad(squad, fs, (int) f.length());
-        boolean result1 = DataHelper.createTable("SQUAD", squad.getId());
+        boolean result1 = DataHelper.createTable("SQUAD",squadIDTmp);
         if (result || result1) {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "New squad added", squadNameTmp + " has been added");
             squadName.clear();

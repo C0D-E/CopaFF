@@ -9,15 +9,12 @@ import com.jfoenix.controls.JFXComboBox;
 import copaff.alert.AlertMaker;
 import copaff.database.DataHelper;
 import copaff.database.DatabaseHandler;
-import copaff.model.Player;
-import copaff.model.Squad;
 import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -26,6 +23,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
+import squadcard.Player;
+import squadcard.Squad;
 
 /**
  * FXML Controller class

@@ -12,8 +12,6 @@ import copaff.alert.AlertMaker;
 import copaff.database.DataHelper;
 import copaff.database.DatabaseHandler;
 import copaff.model.Clan;
-import copaff.model.Player;
-import copaff.model.Squad;
 import copaff.model.Team;
 import copaff.model.match_modes.Scrimmage;
 import copaff.ui.link.LinkController;
@@ -49,6 +47,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import masktextfield.MaskTextField;
 import org.apache.commons.lang3.StringUtils;
+import squadcard.Player;
+import squadcard.Squad;
 
 /**
  * FXML Controller class

@@ -37,7 +37,6 @@ public class ListToPDF {
             } else {
                 page.setMediaBox(new PDRectangle(PDRectangle.A4.getWidth(), PDRectangle.A4.getHeight()));
             }
-
             doc.addPage(page);
             //Initialize table
             float margin = 10;
@@ -45,7 +44,6 @@ public class ListToPDF {
             float yStartNewPage = page.getMediaBox().getHeight() - (2 * margin);
             float yStart = yStartNewPage;
             float bottomMargin = 0;
-
             BaseTable dataTable = new BaseTable(yStart, yStartNewPage, bottomMargin, tableWidth, margin, doc, page, true,
                     true);
             DataTable t = new DataTable(dataTable, page);

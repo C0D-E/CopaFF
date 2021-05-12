@@ -1,6 +1,5 @@
 package copaff.database;
 
-import copaff.model.Player;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -25,6 +24,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import squadcard.Player;
 
 public final class DatabaseHandler {
 

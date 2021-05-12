@@ -1,12 +1,10 @@
 package copaff.database;
 
 import copaff.model.Clan;
-import copaff.model.Player;
-import copaff.model.Squad;
 import copaff.model.Team;
 import copaff.model.match_modes.Scrimmage;
 import copaff.model.relations.FixedSquad;
-import copaff.model.relations.Match;
+import copaff.model.relations.SquadCardModel;
 import copaff.model.relations.SquadAlternate;
 import java.io.FileInputStream;
 import java.sql.PreparedStatement;
@@ -17,6 +15,8 @@ import java.sql.Timestamp;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import squadcard.Player;
+import squadcard.Squad;
 
 /**
  *
@@ -167,7 +167,7 @@ public class DataHelper {
                     + ", squadID varchar(200), player1ID varchar(200),"
                     + " player2ID varchar(200), player3ID varchar(200),"
                     + " player4ID varchar(200), player1Kills int, player2Kills int,"
-                    + " player3Kills int, player4Kills int, finalSquadPosition int)";
+                    + " player3Kills int, player4Kills int, finalSquadPosition int, totalPoints int)";
             PreparedStatement statement = DatabaseHandler.getInstance().getConnection().prepareStatement(sql);
             return statement.executeUpdate() > 0;
         } catch (SQLException ex) {
@@ -176,25 +176,43 @@ public class DataHelper {
         return false;
     }
 
-    public static boolean insertNewMatch(Match match) {
+    public static boolean insertNewCard(String tableName, SquadCardModel card) {
         try {
             PreparedStatement statement = DatabaseHandler.getInstance().getConnection().prepareStatement(
-                    "INSERT INTO MATCH(cardID, squadInGamePosition, squadID, player1ID, player2ID,"
+                    "INSERT INTO MATCH" + tableName.replace("-", "") + " (cardID, squadInGamePosition, squadID, player1ID, player2ID,"
                     + "player3ID, player4ID, player1Kills, player2Kills, player3Kills,"
-                    + "player4Kills, finalSquadPosition) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)");
-            statement.setString(1, match.getCardID());
-            statement.setInt(2, match.getSquadInGamePosition());
-            statement.setString(3, match.getSquadID());
-            statement.setString(4, match.getPlayer1ID());
-            statement.setString(5, match.getPlayer2ID());
-            statement.setString(6, match.getPlayer3ID());
-            statement.setString(7, match.getPlayer4ID());
-            statement.setInt(8, match.getPlayer1Kills());
-            statement.setInt(9, match.getPlayer2Kills());
-            statement.setInt(10, match.getPlayer3Kills());
-            statement.setInt(11, match.getPlayer4Kills());
-            statement.setInt(12, match.getFinalSquadPosition());
+                    + "player4Kills, finalSquadPosition, totalPoints) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)");
+            statement.setString(1, card.getCardID());
+            statement.setInt(2, card.getSquadInGamePosition());
+            statement.setString(3, card.getSquadID());
+            statement.setString(4, card.getPlayer1ID());
+            statement.setString(5, card.getPlayer2ID());
+            statement.setString(6, card.getPlayer3ID());
+            statement.setString(7, card.getPlayer4ID());
+            statement.setInt(8, card.getPlayer1Kills());
+            statement.setInt(9, card.getPlayer2Kills());
+            statement.setInt(10, card.getPlayer3Kills());
+            statement.setInt(11, card.getPlayer4Kills());
+            statement.setInt(12, card.getFinalSquadPosition());
+            statement.setInt(13, card.getSquadTotalPoints());
             return statement.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            LOGGER.log(Level.ERROR, "{}", ex);
+        }
+        return false;
+    }
+    
+    public static boolean isCardExistsInTable(String tableName, String cardID) {
+        try {
+            String checkstmt = "SELECT COUNT(*) FROM MATCH" + tableName.replaceAll("-", "") + " WHERE cardID=?";
+            PreparedStatement stmt = DatabaseHandler.getInstance().getConnection().prepareStatement(checkstmt);
+            stmt.setString(1, cardID);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                int count = rs.getInt(1);
+                System.out.println(count);
+                return (count > 0);
+            }
         } catch (SQLException ex) {
             LOGGER.log(Level.ERROR, "{}", ex);
         }

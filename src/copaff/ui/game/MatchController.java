@@ -5,16 +5,22 @@
  */
 package copaff.ui.game;
 
+import copaff.alert.AlertMaker;
+import copaff.database.DataHelper;
 import copaff.database.DatabaseHandler;
-import copaff.model.Player;
-import copaff.model.Squad;
 import copaff.model.match_modes.Scrimmage;
+import copaff.model.relations.SquadCardModel;
 import copaff.ui.link.LinkController;
+import static copaff.ui.main.CopaFF.stage;
+import copaff.util.LibraryAssistantUtil;
 import java.net.URL;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,6 +34,8 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import masktextfield.MaskTextField;
+import squadcard.Player;
+import squadcard.Squad;
 import squadcard.SquadCard;
 
 /**
@@ -38,7 +46,6 @@ import squadcard.SquadCard;
 public class MatchController implements Initializable {
 
     private ObservableList<SquadCard> cards = FXCollections.observableArrayList();
-    ;
 
     @FXML
     private ChoiceBox<Scrimmage> scrimList;
@@ -67,6 +74,7 @@ public class MatchController implements Initializable {
 
     /**
      * Initializes the controller class.
+     *
      * @param url
      * @param rb
      */
@@ -211,17 +219,12 @@ public class MatchController implements Initializable {
 
         card.setSquadInGamePosition(Integer.valueOf(squadPosition.getText()));
         Squad squad = squadList.getSelectionModel().getSelectedItem();
-        card.setSquadName(squad.getName());
-        card.setSquadID(squad.getId());
+        card.setSquad(squad);
 
-        Player player1Tmp = player1.getSelectionModel().getSelectedItem();
-        card.setPlayer1Name(player1Tmp.getName());
-        Player player2Tmp = player2.getSelectionModel().getSelectedItem();
-        card.setPlayer2Name(player2Tmp.getName());
-        Player player3Tmp = player3.getSelectionModel().getSelectedItem();
-        card.setPlayer3Name(player3Tmp.getName());
-        Player player4Tmp = player4.getSelectionModel().getSelectedItem();
-        card.setPlayer4Name(player4Tmp.getName());
+        card.setPlayer1(player1.getSelectionModel().getSelectedItem());
+        card.setPlayer2(player2.getSelectionModel().getSelectedItem());
+        card.setPlayer3(player3.getSelectionModel().getSelectedItem());
+        card.setPlayer4(player4.getSelectionModel().getSelectedItem());
 
         try {
             String checkstmt = "SELECT logo FROM SQUAD WHERE id=?";
@@ -236,13 +239,201 @@ public class MatchController implements Initializable {
             java.util.logging.Logger.getLogger(LinkController.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
 
-        cards.add(card);
-
+        if (cards.size() < 12) {
+            cards.add(card);
+        } else {
+            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Maximum Reach", "Please remove squads before adding more.");
+            return;
+        }
+        
+        card.SetCardHeight(80);
+        card.SetCardWidth(50);
         if (Integer.valueOf(squadPosition.getText()) % 2 == 0) {
             evenSquadPositions.getChildren().add(card);
         } else {
             oddSquadPositions.getChildren().add(card);
         }
+    }
+
+    @FXML
+    private void handleLoadMatchAction(ActionEvent event) {
+        cards.clear();
+        DatabaseHandler handler = DatabaseHandler.getInstance();
+        String qu = "SELECT * FROM MATCH" + scrimList.getSelectionModel().getSelectedItem().getId().replace("-", "");
+        ResultSet rs = handler.execQuery(qu);
+        try {
+            while (rs.next()) {
+                String cardID = rs.getString("cardID");
+                int squadInGamePosition = rs.getInt("squadInGamePosition");
+                String squadID = rs.getString("squadID");
+                String player1ID = rs.getString("playerID");
+                String player2ID = rs.getString("player2ID");
+                String player3ID = rs.getString("player3ID");
+                String player4ID = rs.getString("player4ID");
+                int player1Kills = rs.getInt("player1Kills");
+                int player2Kills = rs.getInt("player2Kills");
+                int player3Kills = rs.getInt("player3Kills");
+                int player4Kills = rs.getInt("player4Kills");
+                int finalSquadPosition = rs.getInt("finalSquadPosition");
+
+                Squad squad = new Squad();
+                String checkstmt = "SELECT * FROM SQUAD WHERE id=?";
+                PreparedStatement stmt = DatabaseHandler.getInstance().getConnection().prepareStatement(checkstmt);
+                stmt.setString(1, squadID);
+                ResultSet result = stmt.executeQuery();
+                if (result.next()) {
+                    String squadIDTmp = result.getString("id");
+                    String squadNameTmp = result.getString("name");
+
+                    squad = new Squad(squadIDTmp, squadNameTmp);
+                }
+                Image squadLogo = null;
+                checkstmt = "SELECT logo FROM SQUAD WHERE id=?";
+                stmt = DatabaseHandler.getInstance().getConnection().prepareStatement(checkstmt);
+                stmt.setString(1, squad.getId());
+                result = stmt.executeQuery();
+                if (result.next()) {
+                    squadLogo = new Image(result.getBinaryStream("logo"));
+                }
+
+                Player player1Tmp = new Player();
+                checkstmt = "SELECT * FROM PLAYER WHERE id=?";
+                stmt = DatabaseHandler.getInstance().getConnection().prepareStatement(checkstmt);
+                stmt.setString(1, player1ID);
+                result = stmt.executeQuery();
+                if (result.next()) {
+                    String playerIDTmp = result.getString("id");
+                    String playerNameTmp = result.getString("name");
+                    String playerCountryTmp = result.getString("country");
+                    LocalDateTime playerCreatedTmp = result.getTimestamp("created").toLocalDateTime();
+
+                    player1Tmp = new Player(playerIDTmp, playerNameTmp, playerCountryTmp, playerCreatedTmp);
+                }
+                Player player2Tmp = new Player();
+                checkstmt = "SELECT * FROM PLAYER WHERE id=?";
+                stmt = DatabaseHandler.getInstance().getConnection().prepareStatement(checkstmt);
+                stmt.setString(1, player2ID);
+                result = stmt.executeQuery();
+                if (result.next()) {
+                    String playerIDTmp = result.getString("id");
+                    String playerNameTmp = result.getString("name");
+                    String playerCountryTmp = result.getString("country");
+                    LocalDateTime playerCreatedTmp = result.getTimestamp("created").toLocalDateTime();
+
+                    player2Tmp = new Player(playerIDTmp, playerNameTmp, playerCountryTmp, playerCreatedTmp);
+                }
+                Player player3Tmp = new Player();
+                checkstmt = "SELECT * FROM PLAYER WHERE id=?";
+                stmt = DatabaseHandler.getInstance().getConnection().prepareStatement(checkstmt);
+                stmt.setString(1, player3ID);
+                result = stmt.executeQuery();
+                if (result.next()) {
+                    String playerIDTmp = result.getString("id");
+                    String playerNameTmp = result.getString("name");
+                    String playerCountryTmp = result.getString("country");
+                    LocalDateTime playerCreatedTmp = result.getTimestamp("created").toLocalDateTime();
+
+                    player3Tmp = new Player(playerIDTmp, playerNameTmp, playerCountryTmp, playerCreatedTmp);
+                }
+                Player player4Tmp = new Player();
+                checkstmt = "SELECT * FROM PLAYER WHERE id=?";
+                stmt = DatabaseHandler.getInstance().getConnection().prepareStatement(checkstmt);
+                stmt.setString(1, player4ID);
+                result = stmt.executeQuery();
+                if (result.next()) {
+                    String playerIDTmp = result.getString("id");
+                    String playerNameTmp = result.getString("name");
+                    String playerCountryTmp = result.getString("country");
+                    LocalDateTime playerCreatedTmp = result.getTimestamp("created").toLocalDateTime();
+
+                    player4Tmp = new Player(playerIDTmp, playerNameTmp, playerCountryTmp, playerCreatedTmp);
+                }
+
+                SquadCard card = new SquadCard();
+                card.setCardID(cardID);
+                card.setSquadInGamePosition(squadInGamePosition);
+                card.setSquad(squad);
+                card.setPlayer1(player1Tmp);
+                card.setPlayer2(player2Tmp);
+                card.setPlayer3(player3Tmp);
+                card.setPlayer4(player4Tmp);
+                card.setKillsPlayer1(player1Kills);
+                card.setKillsPlayer2(player2Kills);
+                card.setKillsPlayer3(player3Kills);
+                card.setKillsPlayer4(player4Kills);
+                card.setSquadFinalPosition(finalSquadPosition);
+                card.setSquadLogo(squadLogo);
+
+                if (cards.size() < 12) {
+                    cards.add(card);
+                } else {
+                    AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Maximum Reach", "Please remove squads before adding more.");
+                    return;
+                }
+
+                if (squadInGamePosition % 2 == 0) {
+                    evenSquadPositions.getChildren().add(card);
+                } else {
+                    oddSquadPositions.getChildren().add(card);
+                }
+            }
+        } catch (SQLException ex) {
+            java.util.logging.Logger.getLogger(LinkController.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+    }
+
+    @FXML
+    private void handleExportMatchAsPDFAction(ActionEvent event) {
+        List<List> printData = new ArrayList<>();
+        String[] headers = {"   NOMBRE   ", "PUNTOS"};
+        AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Report", "DataStartLoading");
+        printData.add(Arrays.asList(headers));
+        for (SquadCard card : cards) {
+            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Report", "DataLoading");
+            List<String> rowSquadHeader = new ArrayList<>();
+            rowSquadHeader.add(card.getSquadFinalPosition() + " - " + card.getSquad().getName());
+            rowSquadHeader.add(String.valueOf(card.getSquadPositionPoints()));
+            printData.add(rowSquadHeader);
+            List<String> row = new ArrayList<>();
+            row.add(card.getPlayer1().getName());
+            row.add(String.valueOf(card.getKillsPlayer1()));
+            printData.add(row);
+            row = new ArrayList<>();
+            row.add(card.getPlayer2().getName());
+            row.add(String.valueOf(card.getKillsPlayer2()));
+            printData.add(row);
+            row = new ArrayList<>();
+            row.add(card.getPlayer3().getName());
+            row.add(String.valueOf(card.getKillsPlayer3()));
+            printData.add(row);
+            row = new ArrayList<>();
+            row.add(card.getPlayer4().getName());
+            row.add(String.valueOf(card.getKillsPlayer4()));
+            printData.add(row);
+            row = new ArrayList<>();
+            row.add("Puntos en Total");
+            row.add(String.valueOf(card.getSquadTotalPoints()));
+            printData.add(row);
+        }
+        LibraryAssistantUtil.initPDFExprot(rootPane, mainContainer, stage, printData);
+    }
+
+    @FXML
+    private void handleSaveMatchAction(ActionEvent event) {
+        if (evenSquadPositions.getChildren().size() <= 0 & oddSquadPositions.getChildren().size() <= 0) {
+            return;
+        }
+        for (SquadCard card : cards) {
+            SquadCardModel cardModel = new SquadCardModel(card.getCardID(),
+                    card.getSquadInGamePosition(), card.getSquad().getId(),
+                    card.getPlayer1().getId(), card.getPlayer2().getId(),
+                    card.getPlayer3().getId(), card.getPlayer4().getId(),
+                    card.getKillsPlayer1(), card.getKillsPlayer2(),
+                    card.getKillsPlayer3(), card.getKillsPlayer4(),
+                    card.getSquadFinalPosition(), card.getSquadTotalPoints());
+            DataHelper.insertNewCard(scrimList.getSelectionModel().getSelectedItem().getId(), cardModel);
+        }
+
     }
 
 }

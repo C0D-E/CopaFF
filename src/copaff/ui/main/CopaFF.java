@@ -31,6 +31,7 @@ public class CopaFF extends Application {
         CopaFF.scene = scene;
 
         stage.setScene(scene);
+        stage.setTitle("Copa FF v1.0");
         stage.show();
         new Thread(() -> {
             ExceptionUtil.init();

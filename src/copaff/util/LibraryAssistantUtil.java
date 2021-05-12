@@ -25,10 +25,11 @@ import javafx.stage.StageStyle;
 import copaff.alert.AlertMaker;
 import copaff.export.pdf.ListToPDF;
 import copaff.ui.settings.Preferences;
+import java.util.ArrayList;
 
 public class LibraryAssistantUtil {
 
-    public static final String ICON_IMAGE_LOC = "/resources/icon.png";
+    public static final String ICON_IMAGE_LOC = "/copaff/ui/main/user.png";
     public static final String MAIL_CONTENT_LOC = "/resources/mail_content.html";
     private static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss a");
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
@@ -88,7 +89,7 @@ public class LibraryAssistantUtil {
             }
         });
         if (flag) {
-            AlertMaker.showMaterialDialog(rootPane, contentPane, Arrays.asList(okayBtn, openBtn), "Completed", "Member data has been exported.");
+            AlertMaker.showMaterialDialog(rootPane, contentPane, Arrays.asList(okayBtn, openBtn), "Completed", "Match data has been exported.");
         }
     }
 

@@ -29,6 +29,11 @@
                   <Font size="14.0" />
                </font>
             </JFXButton>
+            <JFXButton buttonType="RAISED" layoutX="28.0" layoutY="240.0" onAction="#handleExportDBAction" ripplerFill="#c0e80f" text="Export  DB">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </JFXButton>
             <JFXButton buttonType="RAISED" ripplerFill="#c0e80f" text="Acerca de" VBox.vgrow="ALWAYS">
                <font>
                   <Font size="14.0" />

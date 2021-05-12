@@ -7,6 +7,7 @@ import java.time.format.DateTimeFormatter;
 import javafx.concurrent.Task;
 import copaff.alert.AlertMaker;
 import copaff.database.DatabaseHandler;
+import static copaff.ui.main.CopaFF.stage;
 import copaff.util.LibraryAssistantUtil;
 
 /**
@@ -34,7 +35,7 @@ public class DatabaseExporter extends Task<Boolean> {
 
     private void createBackup() throws Exception {
         DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy_MM_dd_hh_mm_ss");
-        String backupdirectory = backupDirectory.getAbsolutePath() + File.separator + LocalDateTime.now().format(dateFormat);
+        String backupdirectory = backupDirectory.getAbsolutePath() + File.separator + stage.getTitle().replace(" ", "") + "_" + LocalDateTime.now().format(dateFormat);
         try (CallableStatement cs = DatabaseHandler.getInstance().getConnection().prepareCall("CALL SYSCS_UTIL.SYSCS_BACKUP_DATABASE(?)")) {
             cs.setString(1, backupdirectory);
             cs.execute();

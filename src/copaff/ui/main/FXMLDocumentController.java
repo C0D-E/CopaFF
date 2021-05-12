@@ -5,6 +5,8 @@
  */
 package copaff.ui.main;
 
+import copaff.alert.AlertMaker;
+import copaff.database.export.DatabaseExporter;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -19,9 +21,10 @@ import javafx.scene.effect.GaussianBlur;
 import javafx.scene.layout.BorderPane;
 import javafx.util.Duration;
 import static copaff.ui.main.CopaFF.*;
+import java.io.File;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
+import javafx.stage.DirectoryChooser;
 
 /**
  *
@@ -48,6 +51,7 @@ public class FXMLDocumentController implements Initializable {
         }
 
     }
+
     @FXML
     private void handleMatchAction(ActionEvent event) {
         try {
@@ -63,6 +67,7 @@ public class FXMLDocumentController implements Initializable {
         }
 
     }
+
     @FXML
     private void handleLinkAction(ActionEvent event) {
         try {
@@ -75,6 +80,21 @@ public class FXMLDocumentController implements Initializable {
         } catch (IOException ex) {
             ex.printStackTrace();
             handleError(Alert.AlertType.ERROR, ex, "It was unable to load the Registration Form", ButtonType.OK);
+        }
+
+    }
+
+    @FXML
+    private void handleExportDBAction(ActionEvent event) {
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        directoryChooser.setTitle("Select Location to Create Backup");
+        File selectedDirectory = directoryChooser.showDialog(stage);
+        if (selectedDirectory == null) {
+            AlertMaker.showErrorMessage("Export cancelled", "No Valid Directory Found");
+        } else {
+            DatabaseExporter databaseExporter = new DatabaseExporter(selectedDirectory);
+            //progressSpinner.visibleProperty().bind(databaseExporter.runningProperty());
+            new Thread(databaseExporter).start();
         }
 
     }

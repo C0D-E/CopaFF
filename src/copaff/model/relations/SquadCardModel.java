@@ -9,7 +9,7 @@ package copaff.model.relations;
  *
  * @author Gustavo A Salazar Lima
  */
-public class Match {
+public class SquadCardModel {
 
     private String cardID;
     private int squadInGamePosition;
@@ -23,11 +23,12 @@ public class Match {
     private int player3Kills;
     private int player4Kills;
     private int finalSquadPosition;
+    private int totalPoints;
 
-    public Match(String cardID, int squadInGamePosition, String squadID,
+    public SquadCardModel(String cardID, int squadInGamePosition, String squadID,
             String player1ID, String player2ID, String player3ID, String player4ID,
             int player1Kills, int player2Kills, int player3Kills, int player4Kills,
-            int finalSquadPosition) {
+            int finalSquadPosition, int totalPoints) {
         this.cardID = cardID;
         this.squadInGamePosition = squadInGamePosition;
         this.squadID = squadID;
@@ -40,6 +41,7 @@ public class Match {
         this.player3Kills = player3Kills;
         this.player4Kills = player4Kills;
         this.finalSquadPosition = finalSquadPosition;
+        this.totalPoints = totalPoints;
     }
 
     /**
@@ -208,6 +210,13 @@ public class Match {
      */
     public void setFinalSquadPosition(int finalSquadPosition) {
         this.finalSquadPosition = finalSquadPosition;
+    }
+
+    /**
+     * @return the totalPoints
+     */
+    public int getSquadTotalPoints() {
+        return totalPoints;
     }
 
 }

@@ -62,11 +62,11 @@ public class RegistrationController implements Initializable {
     @FXML
     private JFXTextField playerName;
     @FXML
-    private MaskTextField playerID;
+    private JFXTextField playerID;
     @FXML
     private JFXTextField squadID;
     @FXML
-    private MaskTextField clanID;
+    private JFXTextField clanID;
     @FXML
     private ImageView squadLogo;
     @FXML
@@ -105,6 +105,8 @@ public class RegistrationController implements Initializable {
     private JFXButton genScrimID;
     @FXML
     private IntlPhoneNumberInputControl playerPhoneNumber;
+    @FXML
+    private JFXComboBox<?> playerCountry;
 
     /**
      * Initializes the controller class.

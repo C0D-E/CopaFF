@@ -196,10 +196,10 @@ public final class DatabaseHandler {
 //    }
     public boolean updatePlayer(Player player) {
         try {
-            String update = "UPDATE PLAYER SET NAME=?, COUNTRY=? WHERE ID=?";
+            String update = "UPDATE PLAYER SET NAME=?, PHONENUMBER=? WHERE ID=?";
             PreparedStatement stmt = conn.prepareStatement(update);
             stmt.setString(1, player.getName());
-            stmt.setString(2, player.getCountry());
+            stmt.setString(2, player.getPhoneNumber());
             stmt.setString(3, player.getId());
             int res = stmt.executeUpdate();
             return (res > 0);

@@ -90,10 +90,10 @@ public class DataHelper {
     public static boolean insertNewPlayer(Player player, FileInputStream fs, int fLength) {
         try {
             PreparedStatement statement = DatabaseHandler.getInstance().getConnection().prepareStatement(
-                    "INSERT INTO PLAYER(id,name,country,logo,created) VALUES(?,?,?,?,?)");
+                    "INSERT INTO PLAYER(id,name,phoneNumber,logo,created) VALUES(?,?,?,?,?)");
             statement.setString(1, player.getId());
             statement.setString(2, player.getName());
-            statement.setString(3, player.getCountry());
+            statement.setString(3, player.getPhoneNumber());
             statement.setBinaryStream(4, fs, fLength);
             statement.setTimestamp(5, Timestamp.valueOf(player.getCreationDateTime()));
             return statement.executeUpdate() > 0;

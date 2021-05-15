@@ -8,6 +8,7 @@ package copaff.ui.registration;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextField;
+import com.keyword.intlphonenumberinput.IntlPhoneNumberInputControl;
 import copaff.alert.AlertMaker;
 import copaff.database.DataHelper;
 import copaff.database.DatabaseHandler;
@@ -15,10 +16,6 @@ import copaff.model.Clan;
 import copaff.model.Team;
 import copaff.model.match_modes.Scrimmage;
 import copaff.ui.link.LinkController;
-import copaff.util.CountriesFetcher;
-import copaff.util.Country;
-import copaff.util.LoadCountryFlags;
-import copaff.util.CountryCellView;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -27,10 +24,8 @@ import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
@@ -38,7 +33,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -57,9 +51,6 @@ import squadcard.Squad;
  */
 public class RegistrationController implements Initializable {
 
-    public static Map<String, Image> flags;
-    public static CountriesFetcher.CountryList countries;
-
     @FXML
     private JFXTextField squadName;
     @FXML
@@ -71,13 +62,11 @@ public class RegistrationController implements Initializable {
     @FXML
     private JFXTextField playerName;
     @FXML
-    private JFXTextField playerID;
-    @FXML
-    private JFXComboBox<Country> playerCountry;
+    private MaskTextField playerID;
     @FXML
     private JFXTextField squadID;
     @FXML
-    private JFXTextField clanID;
+    private MaskTextField clanID;
     @FXML
     private ImageView squadLogo;
     @FXML
@@ -114,6 +103,8 @@ public class RegistrationController implements Initializable {
     private JFXTextField customRoomID;
     @FXML
     private JFXButton genScrimID;
+    @FXML
+    private IntlPhoneNumberInputControl playerPhoneNumber;
 
     /**
      * Initializes the controller class.
@@ -123,17 +114,6 @@ public class RegistrationController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        LoadCountryFlags loadCountryFlags = new LoadCountryFlags();
-        Thread th = new Thread(loadCountryFlags);
-        th.setDaemon(true);
-        th.start();
-        try {
-            flags = loadCountryFlags.get().getFlags();
-            countries = loadCountryFlags.get().getCountryList();
-            init();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
         genScrimID.setUserData(scrimmageID);
         genSquadID.setUserData(squadID);
         genTeamID.setUserData(teamID);
@@ -165,17 +145,12 @@ public class RegistrationController implements Initializable {
         try {
             while (rs.next()) {
                 Player player = new Player(rs.getString("id"), rs.getString("name"),
-                        rs.getString("country"), rs.getTimestamp("created").toLocalDateTime());
+                        rs.getString("phoneNumber"), rs.getTimestamp("created").toLocalDateTime());
                 playerCreatorList.getItems().add(player);
             }
         } catch (SQLException ex) {
             java.util.logging.Logger.getLogger(LinkController.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-    }
-
-    public final void init() {
-        playerCountry.getItems().addAll(countries);
-        playerCountry.setCellFactory((ListView<Country> p) -> new CountryCellView());
     }
 
     @FXML
@@ -228,11 +203,14 @@ public class RegistrationController implements Initializable {
         String playerNameTmp = StringUtils.trimToEmpty(playerName.getText());
         String playerIDTmp = StringUtils.trimToEmpty(playerID.getText());
 
-        if (playerNameTmp.isEmpty() || playerIDTmp.isEmpty() || playerCountry.getSelectionModel().isEmpty()) {
+        if (playerNameTmp.isEmpty() || playerIDTmp.isEmpty() || playerPhoneNumber.getFormattedPhoneNumber().isEmpty()) {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Insufficient Data", "Please enter data in all fields.");
             return;
         }
-        String playerCountryTmp = StringUtils.trimToEmpty(playerCountry.getSelectionModel().getSelectedItem().getName());
+        String playerPhoneNumberTmp = StringUtils.trimToEmpty(playerPhoneNumber.getEditor().getText());
+        playerPhoneNumberTmp = "+" + playerPhoneNumber.getCountryCodeForRegion() + " " + playerPhoneNumberTmp;
+        
+        System.out.println(playerPhoneNumberTmp);
 
         if (playerLogo.getImage() == null) {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Insufficient Data", "Please select an image for the logo of this player.");
@@ -252,13 +230,13 @@ public class RegistrationController implements Initializable {
             return;
         }
 
-        Player player = new Player(playerIDTmp, playerNameTmp, playerCountryTmp);
+        Player player = new Player(playerIDTmp, playerNameTmp, playerPhoneNumberTmp);
         boolean result = DataHelper.insertNewPlayer(player, fs, (int) f.length());
         if (result) {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "New player added", playerNameTmp + " has been added");
             playerID.clear();
             playerName.clear();
-            playerCountry.getSelectionModel().clearSelection();
+            playerPhoneNumber.getEditor().clear();
         } else {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Failed to add new player", "Check all the entries and try again");
         }
@@ -304,7 +282,7 @@ public class RegistrationController implements Initializable {
 
         Squad squad = new Squad(squadIDTmp, squadNameTmp);
         boolean result = DataHelper.insertNewSquad(squad, fs, (int) f.length());
-        boolean result1 = DataHelper.createTable("SQUAD",squadIDTmp);
+        boolean result1 = DataHelper.createTable("SQUAD", squadIDTmp);
         if (result || result1) {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "New squad added", squadNameTmp + " has been added");
             squadName.clear();

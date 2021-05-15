@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <tables>
-    <table-entry name="PLAYER" col-data="id varchar(200) primary key,name varchar(200),country varchar(200),logo blob,created timestamp"/>
+    <table-entry name="PLAYER" col-data="id varchar(200) primary key,name varchar(200),phoneNumber varchar(200),logo blob,created timestamp"/>
     <table-entry name="SQUAD" col-data="id varchar(200) primary key,name varchar(200),logo blob"/>
     <table-entry name="TEAM" col-data="id varchar(200) primary key,name varchar(200),logo blob"/>
     <table-entry name="CLAN" col-data="id varchar(200) primary key,name varchar(200),logo blob"/>

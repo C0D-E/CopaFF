@@ -130,9 +130,9 @@ public class MatchController implements Initializable {
                     if (resultSet.next()) {
                         String player1ID = resultSet.getString("id");
                         String player1Name = resultSet.getString("name");
-                        String player1Country = resultSet.getString("country");
+                        String player1PhoneNumber = resultSet.getString("phoneNumber");
                         LocalDateTime player1Created = resultSet.getTimestamp("created").toLocalDateTime();
-                        Player playerTmp = new Player(player1ID, player1Name, player1Country, player1Created);
+                        Player playerTmp = new Player(player1ID, player1Name, player1PhoneNumber, player1Created);
                         player1.getItems().add(playerTmp);
                         player2.getItems().add(playerTmp);
                         player3.getItems().add(playerTmp);
@@ -317,10 +317,10 @@ public class MatchController implements Initializable {
                 if (result.next()) {
                     String playerIDTmp = result.getString("id");
                     String playerNameTmp = result.getString("name");
-                    String playerCountryTmp = result.getString("country");
+                    String playerPhoneNumberTmp = result.getString("phoneNumber");
                     LocalDateTime playerCreatedTmp = result.getTimestamp("created").toLocalDateTime();
 
-                    player1Tmp = new Player(playerIDTmp, playerNameTmp, playerCountryTmp, playerCreatedTmp);
+                    player1Tmp = new Player(playerIDTmp, playerNameTmp, playerPhoneNumberTmp, playerCreatedTmp);
                 }
                 Player player2Tmp = new Player();
                 checkstmt = "SELECT * FROM PLAYER WHERE id=?";
@@ -330,10 +330,10 @@ public class MatchController implements Initializable {
                 if (result.next()) {
                     String playerIDTmp = result.getString("id");
                     String playerNameTmp = result.getString("name");
-                    String playerCountryTmp = result.getString("country");
+                    String playerPhoneNumberTmp = result.getString("phoneNumber");
                     LocalDateTime playerCreatedTmp = result.getTimestamp("created").toLocalDateTime();
 
-                    player2Tmp = new Player(playerIDTmp, playerNameTmp, playerCountryTmp, playerCreatedTmp);
+                    player2Tmp = new Player(playerIDTmp, playerNameTmp, playerPhoneNumberTmp, playerCreatedTmp);
                 }
                 Player player3Tmp = new Player();
                 checkstmt = "SELECT * FROM PLAYER WHERE id=?";
@@ -343,10 +343,10 @@ public class MatchController implements Initializable {
                 if (result.next()) {
                     String playerIDTmp = result.getString("id");
                     String playerNameTmp = result.getString("name");
-                    String playerCountryTmp = result.getString("country");
+                    String playerPhoneNumberTmp = result.getString("phoneNumber");
                     LocalDateTime playerCreatedTmp = result.getTimestamp("created").toLocalDateTime();
 
-                    player3Tmp = new Player(playerIDTmp, playerNameTmp, playerCountryTmp, playerCreatedTmp);
+                    player3Tmp = new Player(playerIDTmp, playerNameTmp, playerPhoneNumberTmp, playerCreatedTmp);
                 }
                 Player player4Tmp = new Player();
                 checkstmt = "SELECT * FROM PLAYER WHERE id=?";
@@ -356,10 +356,10 @@ public class MatchController implements Initializable {
                 if (result.next()) {
                     String playerIDTmp = result.getString("id");
                     String playerNameTmp = result.getString("name");
-                    String playerCountryTmp = result.getString("country");
+                    String playerPhoneNumberTmp = result.getString("phoneNumber");
                     LocalDateTime playerCreatedTmp = result.getTimestamp("created").toLocalDateTime();
 
-                    player4Tmp = new Player(playerIDTmp, playerNameTmp, playerCountryTmp, playerCreatedTmp);
+                    player4Tmp = new Player(playerIDTmp, playerNameTmp, playerPhoneNumberTmp, playerCreatedTmp);
                 }
 
                 SquadCard card = new SquadCard();

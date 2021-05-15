@@ -85,10 +85,12 @@ public class LibraryAssistantUtil {
             try {
                 Desktop.getDesktop().open(saveLoc);
             } catch (Exception exp) {
+                //AlertMaker.showTrayMessage("Copa FF", "Report: Cant load file");
                 AlertMaker.showErrorMessage("Could not load file", "Cant load file");
             }
         });
         if (flag) {
+            // AlertMaker.showTrayMessage("Copa FF", "Report");
             AlertMaker.showMaterialDialog(rootPane, contentPane, Arrays.asList(okayBtn, openBtn), "Completed", "Match data has been exported.");
         }
     }

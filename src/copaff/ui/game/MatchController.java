@@ -215,6 +215,15 @@ public class MatchController implements Initializable {
 
     @FXML
     private void handleAddSquadToMatchAction(ActionEvent event) {
+        if (squadList.getSelectionModel().isEmpty()
+                | player1.getSelectionModel().isEmpty()
+                | player2.getSelectionModel().isEmpty()
+                | player3.getSelectionModel().isEmpty()
+                | player4.getSelectionModel().isEmpty()) {
+            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "No Item Selected", "Please select the Players and the Squad to be add.");
+            return;
+        }
+
         SquadCard card = new SquadCard();
 
         card.setSquadInGamePosition(Integer.valueOf(squadPosition.getText()));
@@ -245,7 +254,7 @@ public class MatchController implements Initializable {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Maximum Reach", "Please remove squads before adding more.");
             return;
         }
-        
+
         card.SetCardHeight(80);
         card.SetCardWidth(50);
         if (Integer.valueOf(squadPosition.getText()) % 2 == 0) {
@@ -257,6 +266,10 @@ public class MatchController implements Initializable {
 
     @FXML
     private void handleLoadMatchAction(ActionEvent event) {
+        if (scrimList.getSelectionModel().isEmpty()) {
+            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "No Item Selected", "Please select the Scrimmage to be load.");
+            return;
+        }
         cards.clear();
         DatabaseHandler handler = DatabaseHandler.getInstance();
         String qu = "SELECT * FROM MATCH" + scrimList.getSelectionModel().getSelectedItem().getId().replace("-", "");
@@ -385,34 +398,47 @@ public class MatchController implements Initializable {
     @FXML
     private void handleExportMatchAsPDFAction(ActionEvent event) {
         List<List> printData = new ArrayList<>();
-        String[] headers = {"   NOMBRE   ", "PUNTOS"};
-        AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Report", "DataStartLoading");
+        String[] headers = {"", "PUNTOS"};
         printData.add(Arrays.asList(headers));
         for (SquadCard card : cards) {
-            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Report", "DataLoading");
-            List<String> rowSquadHeader = new ArrayList<>();
-            rowSquadHeader.add(card.getSquadFinalPosition() + " - " + card.getSquad().getName());
-            rowSquadHeader.add(String.valueOf(card.getSquadPositionPoints()));
-            printData.add(rowSquadHeader);
             List<String> row = new ArrayList<>();
+            row.add("");
+            row.add("PUNTOS");
+            printData.add(row);
+
+            row.clear();
+            row.add(card.getSquadFinalPosition() + " - " + card.getSquad().getName());
+            row.add(String.valueOf(card.getSquadPositionPoints()));
+            printData.add(row);
+
+            row.clear();
             row.add(card.getPlayer1().getName());
             row.add(String.valueOf(card.getKillsPlayer1()));
             printData.add(row);
-            row = new ArrayList<>();
+
+            row.clear();
             row.add(card.getPlayer2().getName());
             row.add(String.valueOf(card.getKillsPlayer2()));
             printData.add(row);
-            row = new ArrayList<>();
+
+            row.clear();
             row.add(card.getPlayer3().getName());
             row.add(String.valueOf(card.getKillsPlayer3()));
             printData.add(row);
-            row = new ArrayList<>();
+
+            row.clear();
             row.add(card.getPlayer4().getName());
             row.add(String.valueOf(card.getKillsPlayer4()));
             printData.add(row);
-            row = new ArrayList<>();
+
+            row.clear();
             row.add("Puntos en Total");
             row.add(String.valueOf(card.getSquadTotalPoints()));
+            printData.add(row);
+
+            row.clear();
+            row.add(" ");
+            row.add(" ");
             printData.add(row);
         }
         LibraryAssistantUtil.initPDFExprot(rootPane, mainContainer, stage, printData);
@@ -420,6 +446,10 @@ public class MatchController implements Initializable {
 
     @FXML
     private void handleSaveMatchAction(ActionEvent event) {
+        if (scrimList.getSelectionModel().isEmpty()) {
+            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "No Item Selected", "Please select the Srimmage that belongs to the match.");
+            return;
+        }
         if (evenSquadPositions.getChildren().size() <= 0 & oddSquadPositions.getChildren().size() <= 0) {
             return;
         }

@@ -72,9 +72,9 @@ public class LinkController implements Initializable {
                 while (resulSet.next()) {
                     String playerId = resulSet.getString("id");
                     String playerName = resulSet.getString("name");
-                    String playerCountry = resulSet.getString("country");
+                    String playerPhoneNumber = resulSet.getString("phoneNumber");
                     LocalDateTime created = resulSet.getTimestamp("created").toLocalDateTime();
-                    Player player = new Player(playerId, playerName, playerCountry, created);
+                    Player player = new Player(playerId, playerName, playerPhoneNumber, created);
                     if (!DataHelper.isPlayerExistsInTable("SQUAD", newValue.getId(), playerId)) {
                         selectorPlayer.getItems().add(player);
                     }
@@ -102,6 +102,7 @@ public class LinkController implements Initializable {
         }
         DataHelper.insertPLayerInTable("SQUAD", squadID, player.getId());
         AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Data assign", "Squad succesfully assiggned");
+        selectorPlayer.getItems().remove(selectorPlayer.getSelectionModel().getSelectedItem());
     }
 
 }

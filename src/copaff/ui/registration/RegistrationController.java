@@ -62,11 +62,11 @@ public class RegistrationController implements Initializable {
     @FXML
     private JFXTextField playerName;
     @FXML
-    private JFXTextField playerID;
+    private MaskTextField playerID;
     @FXML
     private JFXTextField squadID;
     @FXML
-    private JFXTextField clanID;
+    private MaskTextField clanID;
     @FXML
     private ImageView squadLogo;
     @FXML
@@ -100,13 +100,11 @@ public class RegistrationController implements Initializable {
     @FXML
     private MaskTextField scrimBlock;
     @FXML
-    private JFXTextField customRoomID;
+    private MaskTextField customRoomID;
     @FXML
     private JFXButton genScrimID;
     @FXML
     private IntlPhoneNumberInputControl playerPhoneNumber;
-    @FXML
-    private JFXComboBox<?> playerCountry;
 
     /**
      * Initializes the controller class.
@@ -212,8 +210,6 @@ public class RegistrationController implements Initializable {
         String playerPhoneNumberTmp = StringUtils.trimToEmpty(playerPhoneNumber.getEditor().getText());
         playerPhoneNumberTmp = "+" + playerPhoneNumber.getCountryCodeForRegion() + " " + playerPhoneNumberTmp;
         
-        System.out.println(playerPhoneNumberTmp);
-
         if (playerLogo.getImage() == null) {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Insufficient Data", "Please select an image for the logo of this player.");
             return;
@@ -239,6 +235,7 @@ public class RegistrationController implements Initializable {
             playerID.clear();
             playerName.clear();
             playerPhoneNumber.getEditor().clear();
+            playerLogo.setImage(null);
         } else {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Failed to add new player", "Check all the entries and try again");
         }

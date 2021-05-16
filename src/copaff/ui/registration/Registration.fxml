@@ -15,7 +15,7 @@
 <?import javafx.scene.text.Font?>
 <?import masktextfield.MaskTextField?>
 
-<StackPane fx:id="rootPane" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="copaff.ui.registration.RegistrationController">
+<StackPane fx:id="rootPane" prefHeight="984.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="copaff.ui.registration.RegistrationController">
    <children>
       <ScrollPane StackPane.alignment="CENTER">
          <content>
@@ -29,11 +29,11 @@
                                  <children>
                                     <VBox alignment="CENTER" spacing="20.0" HBox.hgrow="ALWAYS">
                                        <children>
-                                          <JFXTextField fx:id="customRoomID" labelFloat="true" promptText="ID of Custom Room:">
+                                          <MaskTextField fx:id="customRoomID" mask="N!" promptText="ID of Custom Room:">
                                              <font>
                                                 <Font name="System Bold" size="14.0" />
                                              </font>
-                                          </JFXTextField>
+                                          </MaskTextField>
                                           <JFXComboBox fx:id="maps" maxWidth="1.7976931348623157E308" promptText="Maps..." />
                                        </children>
                                     </VBox>
@@ -113,8 +113,7 @@
                                           <Font name="System Bold" size="14.0" />
                                        </font>
                                     </MaskTextField>
-                                    <IntlPhoneNumberInputControl fx:id="playerPhoneNumber" />
-                                    <JFXComboBox fx:id="playerCountry" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+                                    <IntlPhoneNumberInputControl fx:id="playerPhoneNumber" flagIconShowed="false" />
                                  </children>
                               </VBox>
                               <HBox alignment="CENTER_RIGHT">
@@ -228,11 +227,11 @@
                                           <Font name="System Bold" size="14.0" />
                                        </font>
                                     </JFXTextField>
-                                    <JFXTextField fx:id="clanID" labelFloat="true" layoutX="10.0" layoutY="10.0" promptText="ID of Clan:">
+                                    <MaskTextField fx:id="clanID" mask="N!" promptText="ID of Clan:">
                                        <font>
                                           <Font name="System Bold" size="14.0" />
                                        </font>
-                                    </JFXTextField>
+                                    </MaskTextField>
                                  </children>
                               </VBox>
                               <HBox alignment="CENTER_RIGHT">

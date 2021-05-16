@@ -406,39 +406,34 @@ public class MatchController implements Initializable {
             row.add("PUNTOS");
             printData.add(row);
 
-            row.clear();
+            row = new ArrayList<>();
             row.add(card.getSquadFinalPosition() + " - " + card.getSquad().getName());
             row.add(String.valueOf(card.getSquadPositionPoints()));
             printData.add(row);
 
-            row.clear();
+            row = new ArrayList<>();
             row.add(card.getPlayer1().getName());
             row.add(String.valueOf(card.getKillsPlayer1()));
             printData.add(row);
 
-            row.clear();
+           row = new ArrayList<>();
             row.add(card.getPlayer2().getName());
             row.add(String.valueOf(card.getKillsPlayer2()));
             printData.add(row);
 
-            row.clear();
+            row = new ArrayList<>();
             row.add(card.getPlayer3().getName());
             row.add(String.valueOf(card.getKillsPlayer3()));
             printData.add(row);
 
-            row.clear();
+            row = new ArrayList<>();
             row.add(card.getPlayer4().getName());
             row.add(String.valueOf(card.getKillsPlayer4()));
             printData.add(row);
 
-            row.clear();
+            row = new ArrayList<>();
             row.add("Puntos en Total");
             row.add(String.valueOf(card.getSquadTotalPoints()));
-            printData.add(row);
-
-            row.clear();
-            row.add(" ");
-            row.add(" ");
             printData.add(row);
         }
         LibraryAssistantUtil.initPDFExprot(rootPane, mainContainer, stage, printData);

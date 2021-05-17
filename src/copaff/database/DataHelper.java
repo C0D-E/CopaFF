@@ -167,7 +167,8 @@ public class DataHelper {
                     + ", squadID varchar(200), player1ID varchar(200),"
                     + " player2ID varchar(200), player3ID varchar(200),"
                     + " player4ID varchar(200), player1Kills int, player2Kills int,"
-                    + " player3Kills int, player4Kills int, finalSquadPosition int, totalPoints int)";
+                    + " player3Kills int, player4Kills int, finalSquadPosition int,"
+                    + "squadPositionPoints int, totalPoints int)";
             PreparedStatement statement = DatabaseHandler.getInstance().getConnection().prepareStatement(sql);
             return statement.executeUpdate() > 0;
         } catch (SQLException ex) {
@@ -181,7 +182,7 @@ public class DataHelper {
             PreparedStatement statement = DatabaseHandler.getInstance().getConnection().prepareStatement(
                     "INSERT INTO MATCH" + tableName.replace("-", "") + " (cardID, squadInGamePosition, squadID, player1ID, player2ID,"
                     + "player3ID, player4ID, player1Kills, player2Kills, player3Kills,"
-                    + "player4Kills, finalSquadPosition, totalPoints) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)");
+                    + "player4Kills, finalSquadPosition, squadPositionPoints, totalPoints) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
             statement.setString(1, card.getCardID());
             statement.setInt(2, card.getSquadInGamePosition());
             statement.setString(3, card.getSquadID());
@@ -194,7 +195,8 @@ public class DataHelper {
             statement.setInt(10, card.getPlayer3Kills());
             statement.setInt(11, card.getPlayer4Kills());
             statement.setInt(12, card.getFinalSquadPosition());
-            statement.setInt(13, card.getSquadTotalPoints());
+            statement.setInt(13, card.getSquadPositionPoints());
+            statement.setInt(14, card.getSquadTotalPoints());
             return statement.executeUpdate() > 0;
         } catch (SQLException ex) {
             LOGGER.log(Level.ERROR, "{}", ex);

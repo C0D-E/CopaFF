@@ -23,12 +23,13 @@ public class SquadCardModel {
     private int player3Kills;
     private int player4Kills;
     private int finalSquadPosition;
+    private int squadPositionPoints;
     private int totalPoints;
 
     public SquadCardModel(String cardID, int squadInGamePosition, String squadID,
             String player1ID, String player2ID, String player3ID, String player4ID,
             int player1Kills, int player2Kills, int player3Kills, int player4Kills,
-            int finalSquadPosition, int totalPoints) {
+            int finalSquadPosition,int squadPositionPoints, int totalPoints) {
         this.cardID = cardID;
         this.squadInGamePosition = squadInGamePosition;
         this.squadID = squadID;
@@ -41,6 +42,7 @@ public class SquadCardModel {
         this.player3Kills = player3Kills;
         this.player4Kills = player4Kills;
         this.finalSquadPosition = finalSquadPosition;
+        this.squadPositionPoints = squadPositionPoints;
         this.totalPoints = totalPoints;
     }
 
@@ -212,6 +214,12 @@ public class SquadCardModel {
         this.finalSquadPosition = finalSquadPosition;
     }
 
+    /**
+     * @return the totalPoints
+     */
+    public int getSquadPositionPoints() {
+        return squadPositionPoints;
+    }
     /**
      * @return the totalPoints
      */

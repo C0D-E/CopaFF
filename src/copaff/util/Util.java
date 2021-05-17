@@ -5,10 +5,13 @@
  */
 package copaff.util;
 
+import copaff.model.relations.SquadCardModel;
 import java.awt.*;
 import static java.awt.Color.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import javafx.collections.ObservableList;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -24,6 +27,7 @@ import org.vandeseer.easytable.structure.cell.ImageCell;
 import org.vandeseer.easytable.structure.cell.ImageCell.ImageCellBuilder;
 import org.vandeseer.easytable.structure.cell.TextCell;
 import org.vandeseer.easytable.structure.cell.TextCell.TextCellBuilder;
+import squadcard.SquadCard;
 
 /**
  *
@@ -37,11 +41,11 @@ public class Util {
     private static final PDDocument PD_DOCUMENT_FOR_IMAGES = new PDDocument();
     private static final float PADDING = 50f;
 
-    public Util(File locationToSavePDF) throws IOException {
-        createAndSaveDocumentWithTables(locationToSavePDF.toString(), createSquadCardTable(imagePath));
+    public Util(ObservableList<SquadCard> cards) throws IOException {
+        createAndSaveDocumentWithTables(locationToSavePDF.toString(), createSquadCardTable(imagePath, card));
     }
 
-    private static void createAndSaveDocumentWithTables(String outputFileName, Table... tables) throws IOException {
+    private void createAndSaveDocumentWithTables(String outputFileName, Table... tables) throws IOException {
         PDDocument document = new PDDocument();
         final PDPage page = new PDPage(PDRectangle.A4);
         document.addPage(page);
@@ -76,7 +80,7 @@ public class Util {
         return PDImageXObject.createFromFile(imagePath, PD_DOCUMENT_FOR_IMAGES);
     }
 
-    private Table createSquadCardTable(String imagePath) throws IOException {
+    private Table createSquadCardTable(String imagePath, SquadCard card) throws IOException {
 
         return Table.builder()
                 .addColumnsOfWidth(120, 80, 50)
@@ -85,12 +89,13 @@ public class Util {
                 .fontSize(7)
                 .font(HELVETICA)
                 .addRow(createHeaderRow())
+                .addRow(createSquad(card.getSquadInGamePosition(), card.getSquad().getName(), card.getSquadPositionPoints()))
                 .addRow(createSquadLogo(imagePath))
-                .addRow(createPlayer(player1Name, player1Kills))
-                .addRow(createPlayer(player2Name, player2Kills))
-                .addRow(createPlayer(player3Name, player3Kills))
-                .addRow(createPlayer(player4Name, player4Kills))
-                .addRow(createTotalPoints(totalPoints))
+                .addRow(createPlayer(card.getPlayer1().getName(), card.getKillsPlayer1()))
+                .addRow(createPlayer(card.getPlayer2().getName(), card.getKillsPlayer2()))
+                .addRow(createPlayer(card.getPlayer3().getName(), card.getKillsPlayer3()))
+                .addRow(createPlayer(card.getPlayer4().getName(), card.getKillsPlayer4()))
+                .addRow(createTotalPoints(card.getSquadTotalPoints()))
                 .build();
     }
 
@@ -103,6 +108,23 @@ public class Util {
                 .font(HELVETICA_BOLD)
                 .fontSize(8)
                 .horizontalAlignment(CENTER)
+                .build();
+    }
+
+    private Row createSquad(int squadInGamePosition, String squadName, int squadPositionPoints) {
+        return Row.builder()
+                .add(TextCell.builder()
+                        .borderWidth(1)
+                        .text(String.valueOf(squadInGamePosition) + " - " + squadName)
+                        .backgroundColor(GRAY_LIGHT_3)
+                        .colSpan(2)
+                        .build())
+                .add(TextCell.builder()
+                        .borderWidth(1)
+                        .text(String.valueOf(String.valueOf(squadPositionPoints)))
+                        .backgroundColor(GRAY_LIGHT_3)
+                        .horizontalAlignment(CENTER)
+                        .build())
                 .build();
     }
 
@@ -128,7 +150,7 @@ public class Util {
                 .build();
     }
 
-    private Row createTotalPoints(String totalPoints) {
+    private Row createTotalPoints(int totalPoints) {
         return Row.builder()
                 .add(TextCell.builder()
                         .borderWidth(1)
@@ -138,12 +160,12 @@ public class Util {
                         .build())
                 .add(TextCell.builder()
                         .borderWidth(1)
-                        .text(totalPoints)
+                        .text(String.valueOf(totalPoints))
                         .backgroundColor(GRAY_LIGHT_2)
                         .build())
                 .build();
     }
-    
+
     private ImageCellBuilder createAndGetImageCellBuilder(String imagePath) throws IOException {
         return ImageCell.builder()
                 .verticalAlignment(MIDDLE)

@@ -13,6 +13,7 @@ import copaff.model.relations.SquadCardModel;
 import copaff.ui.link.LinkController;
 import static copaff.ui.main.CopaFF.stage;
 import copaff.util.LibraryAssistantUtil;
+import copaff.util.Util;
 import java.net.URL;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -397,46 +398,7 @@ public class MatchController implements Initializable {
 
     @FXML
     private void handleExportMatchAsPDFAction(ActionEvent event) {
-        List<List> printData = new ArrayList<>();
-        String[] headers = {"", "PUNTOS"};
-        printData.add(Arrays.asList(headers));
-        for (SquadCard card : cards) {
-            List<String> row = new ArrayList<>();
-            row.add("");
-            row.add("PUNTOS");
-            printData.add(row);
-
-            row = new ArrayList<>();
-            row.add(card.getSquadFinalPosition() + " - " + card.getSquad().getName());
-            row.add(String.valueOf(card.getSquadPositionPoints()));
-            printData.add(row);
-
-            row = new ArrayList<>();
-            row.add(card.getPlayer1().getName());
-            row.add(String.valueOf(card.getKillsPlayer1()));
-            printData.add(row);
-
-           row = new ArrayList<>();
-            row.add(card.getPlayer2().getName());
-            row.add(String.valueOf(card.getKillsPlayer2()));
-            printData.add(row);
-
-            row = new ArrayList<>();
-            row.add(card.getPlayer3().getName());
-            row.add(String.valueOf(card.getKillsPlayer3()));
-            printData.add(row);
-
-            row = new ArrayList<>();
-            row.add(card.getPlayer4().getName());
-            row.add(String.valueOf(card.getKillsPlayer4()));
-            printData.add(row);
-
-            row = new ArrayList<>();
-            row.add("Puntos en Total");
-            row.add(String.valueOf(card.getSquadTotalPoints()));
-            printData.add(row);
-        }
-        LibraryAssistantUtil.initPDFExprot(rootPane, mainContainer, stage, printData);
+        Util util = new Util(cards.);
     }
 
     @FXML
@@ -455,7 +417,8 @@ public class MatchController implements Initializable {
                     card.getPlayer3().getId(), card.getPlayer4().getId(),
                     card.getKillsPlayer1(), card.getKillsPlayer2(),
                     card.getKillsPlayer3(), card.getKillsPlayer4(),
-                    card.getSquadFinalPosition(), card.getSquadTotalPoints());
+                    card.getSquadFinalPosition(), card.getSquadPositionPoints(),
+                    card.getSquadTotalPoints());
             DataHelper.insertNewCard(scrimList.getSelectionModel().getSelectedItem().getId(), cardModel);
         }
 

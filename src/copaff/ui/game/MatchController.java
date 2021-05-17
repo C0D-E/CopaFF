@@ -5,15 +5,21 @@
  */
 package copaff.ui.game;
 
+import com.jfoenix.controls.JFXButton;
 import copaff.alert.AlertMaker;
 import copaff.database.DataHelper;
 import copaff.database.DatabaseHandler;
+import copaff.export.pdf.ListToPDF;
 import copaff.model.match_modes.Scrimmage;
 import copaff.model.relations.SquadCardModel;
 import copaff.ui.link.LinkController;
 import static copaff.ui.main.CopaFF.stage;
 import copaff.util.LibraryAssistantUtil;
 import copaff.util.Util;
+import static copaff.util.Util.generateIDString;
+import java.awt.Desktop;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -34,6 +40,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import masktextfield.MaskTextField;
 import squadcard.Player;
 import squadcard.Squad;
@@ -226,6 +233,7 @@ public class MatchController implements Initializable {
         }
 
         SquadCard card = new SquadCard();
+        card.setCardID(generateIDString());
 
         card.setSquadInGamePosition(Integer.valueOf(squadPosition.getText()));
         Squad squad = squadList.getSelectionModel().getSelectedItem();
@@ -392,13 +400,37 @@ public class MatchController implements Initializable {
                 }
             }
         } catch (SQLException ex) {
-            java.util.logging.Logger.getLogger(LinkController.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Error", ex.toString());
         }
     }
 
     @FXML
     private void handleExportMatchAsPDFAction(ActionEvent event) {
-        Util util = new Util(cards.);
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save as PDF");
+        FileChooser.ExtensionFilter extFilter
+                = new FileChooser.ExtensionFilter("PDF files (*.pdf)", "*.pdf");
+        fileChooser.getExtensionFilters().add(extFilter);
+        File saveLoc = fileChooser.showSaveDialog(stage);
+        if (saveLoc == null) {
+            return;
+        }
+        try {
+            Util util = new Util(cards, saveLoc);
+        } catch (IOException ex) {
+            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Error", ex.toString());
+            return;
+        }
+        JFXButton okayBtn = new JFXButton("Okay");
+        JFXButton openBtn = new JFXButton("View File");
+        openBtn.setOnAction((ActionEvent event1) -> {
+            try {
+                Desktop.getDesktop().open(saveLoc);
+            } catch (Exception exp) {
+                AlertMaker.showErrorMessage("Could not load file", "Cant load file");
+            }
+        });
+        AlertMaker.showMaterialDialog(rootPane, mainContainer, Arrays.asList(okayBtn, openBtn), "Completed", "Match data has been exported.");
     }
 
     @FXML

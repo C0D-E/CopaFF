@@ -16,6 +16,7 @@ import copaff.model.Clan;
 import copaff.model.Team;
 import copaff.model.match_modes.Scrimmage;
 import copaff.ui.link.LinkController;
+import static copaff.util.Util.generateIDString;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -209,7 +210,7 @@ public class RegistrationController implements Initializable {
         }
         String playerPhoneNumberTmp = StringUtils.trimToEmpty(playerPhoneNumber.getEditor().getText());
         playerPhoneNumberTmp = "+" + playerPhoneNumber.getCountryCodeForRegion() + " " + playerPhoneNumberTmp;
-        
+
         if (playerLogo.getImage() == null) {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Insufficient Data", "Please select an image for the logo of this player.");
             return;
@@ -246,8 +247,7 @@ public class RegistrationController implements Initializable {
         Button button = (Button) event.getSource();
         JFXTextField field = (JFXTextField) button.getUserData();
 
-        String squadIDTmp = UUID.randomUUID().toString();
-        field.setText(squadIDTmp.toUpperCase());
+        field.setText(generateIDString());
     }
 
     @FXML

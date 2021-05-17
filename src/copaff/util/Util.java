@@ -5,13 +5,17 @@
  */
 package copaff.util;
 
-import copaff.model.relations.SquadCardModel;
+import copaff.alert.AlertMaker;
 import java.awt.*;
 import static java.awt.Color.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.UUID;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
+import javax.imageio.ImageIO;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -21,12 +25,9 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.vandeseer.easytable.TableDrawer;
 import static org.vandeseer.easytable.settings.HorizontalAlignment.*;
 import static org.vandeseer.easytable.settings.VerticalAlignment.MIDDLE;
-import org.vandeseer.easytable.structure.Row;
-import org.vandeseer.easytable.structure.Table;
-import org.vandeseer.easytable.structure.cell.ImageCell;
+import org.vandeseer.easytable.structure.*;
+import org.vandeseer.easytable.structure.cell.*;
 import org.vandeseer.easytable.structure.cell.ImageCell.ImageCellBuilder;
-import org.vandeseer.easytable.structure.cell.TextCell;
-import org.vandeseer.easytable.structure.cell.TextCell.TextCellBuilder;
 import squadcard.SquadCard;
 
 /**
@@ -40,9 +41,23 @@ public class Util {
     private final static Color GRAY_LIGHT_3 = new Color(216, 216, 216);
     private static final PDDocument PD_DOCUMENT_FOR_IMAGES = new PDDocument();
     private static final float PADDING = 50f;
+    private static final String imageFilePath = System.getProperty("user.home")
+            + System.getProperty("file.separator")
+            + "copaff";
 
-    public Util(ObservableList<SquadCard> cards) throws IOException {
-        createAndSaveDocumentWithTables(locationToSavePDF.toString(), createSquadCardTable(imagePath, card));
+    public Util(ObservableList<SquadCard> cards, File pdfFilePath) throws IOException {
+        File copaFF = new File(imageFilePath);
+        if (!copaFF.exists()) {
+            copaFF.mkdir();
+        }
+        ArrayList<Table> tables = new ArrayList<>();
+        for (SquadCard card : cards) {
+            File imageOutputPath = new File(imageFilePath + System.getProperty("file.separator") + card.getCardID() + ".png");
+            BufferedImage bImage = SwingFXUtils.fromFXImage(card.getSquadLogo(), null);
+            ImageIO.write(bImage, "png", imageOutputPath);
+            tables.add(createSquadCardTable(imageOutputPath.toString(), card));
+        }
+        createAndSaveDocumentWithTables(pdfFilePath.getAbsolutePath(), tables.toArray(new Table[tables.size()]));
     }
 
     private void createAndSaveDocumentWithTables(String outputFileName, Table... tables) throws IOException {
@@ -70,7 +85,6 @@ public class Util {
             }
 
         }
-
         document.save(outputFileName);
         document.close();
 
@@ -101,7 +115,9 @@ public class Util {
 
     private Row createHeaderRow() {
         return Row.builder()
-                .add(TextCell.builder().borderWidth(1).padding(6).text("").colSpan(2).build())
+                .add(TextCell.builder().borderWidth(1).padding(6).text("")
+                        .colSpan(2)
+                        .build())
                 .add(TextCell.builder().borderWidth(1).padding(6).text("PUNTOS").build())
                 .backgroundColor(GRAY)
                 .textColor(WHITE)
@@ -130,7 +146,9 @@ public class Util {
 
     private Row createSquadLogo(String imagePath) throws IOException {
         return Row.builder()
-                .add(createAndGetImageCellBuilder(imagePath).rowSpan(4).build())
+                .add(createAndGetImageCellBuilder(imagePath)
+                        .rowSpan(5)
+                        .build())
                 .build();
     }
 
@@ -156,7 +174,6 @@ public class Util {
                         .borderWidth(1)
                         .text("Puntos en Total")
                         .backgroundColor(GRAY_LIGHT_2)
-                        .colSpan(2)
                         .build())
                 .add(TextCell.builder()
                         .borderWidth(1)
@@ -173,17 +190,11 @@ public class Util {
                 .borderWidth(1)
                 .image(createImage(imagePath))
                 .scale(0.4f);
+
     }
 
-    private TextCellBuilder createAndGetTorvaldsQuoteCellBuilder() {
-        return TextCell.builder().borderWidth(1)
-                .text("\"I'm doing a (free) operating system (just a hobby, "
-                        + "won't be big and professional like gnu) for 386(486) AT clones\" \n\n "
-                        + "– Linus Torvalds")
-                .verticalAlignment(MIDDLE)
-                .horizontalAlignment(JUSTIFY)
-                .padding(14)
-                .font(HELVETICA_OBLIQUE)
-                .backgroundColor(GRAY_LIGHT_1);
+    public static String generateIDString() {
+        return UUID.randomUUID().toString().toUpperCase();
     }
+
 }

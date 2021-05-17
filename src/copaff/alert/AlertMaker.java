@@ -155,7 +155,7 @@ public class AlertMaker {
         LibraryAssistantUtil.setStageIcon(stage);
 
         DialogPane dialogPane = alert.getDialogPane();
-        dialogPane.getStylesheets().add(AlertMaker.class.getResource("/resources/dark-theme.css").toExternalForm());
+        dialogPane.getStylesheets().add(AlertMaker.class.getResource("/copaff/resources/dark-theme.css").toExternalForm());
         dialogPane.getStyleClass().add("custom-alert");
     }
 }

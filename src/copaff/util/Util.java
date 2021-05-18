@@ -5,7 +5,6 @@
  */
 package copaff.util;
 
-import copaff.alert.AlertMaker;
 import java.awt.*;
 import static java.awt.Color.*;
 import java.awt.image.BufferedImage;
@@ -28,7 +27,6 @@ import static org.vandeseer.easytable.settings.VerticalAlignment.MIDDLE;
 import org.vandeseer.easytable.structure.*;
 import org.vandeseer.easytable.structure.cell.*;
 import org.vandeseer.easytable.structure.cell.ImageCell.ImageCellBuilder;
-import squadcard.Player;
 import squadcard.SquadCard;
 
 /**
@@ -87,7 +85,7 @@ public class Util {
         document.close();
 
     }
-
+    
     public static PDImageXObject createImage(String imagePath) throws IOException {
         return PDImageXObject.createFromFile(imagePath, PD_DOCUMENT_FOR_IMAGES);
     }
@@ -103,7 +101,10 @@ public class Util {
                 .addRow(createHeaderRow())
                 .addRow(createSquadTitle(card.getSquadInGamePosition(), card.getSquad().getName(), card.getSquadPositionPoints()))
                 .addRow(createCard(card))
-                //                .addRow(createTotalPoints(card.getSquadTotalPoints()))
+                .addRow(createPlayer(card.getPlayer2().getName(), card.getKillsPlayer2()))
+                .addRow(createPlayer(card.getPlayer3().getName(), card.getKillsPlayer3()))
+                .addRow(createPlayer(card.getPlayer4().getName(), card.getKillsPlayer4()))
+                .addRow(createTotalPoints(card.getSquadTotalPoints()))
                 .build();
     }
 
@@ -138,29 +139,44 @@ public class Util {
                 .build();
     }
 
-    private Row createCard(SquadCard card) {
-        
-        for (Player player : card.getPlayers()) {
-            
-        }
+    private Row createCard(SquadCard card) throws IOException {
+        File imageOutputPath = new File(imageFilePath + System.getProperty("file.separator") + card.getCardID() + ".png");
+        BufferedImage bImage = SwingFXUtils.fromFXImage(card.getSquadLogo(), null);
+        ImageIO.write(bImage, "png", imageOutputPath);
         return Row.builder()
-                .add(createAndGetImageCellBuilder(imagePath)
+                .add(createAndGetImageCellBuilder(imageOutputPath.toString())
+                        .rowSpan(4)
                         .build())
                 .add(TextCell.builder()
                         .borderWidth(1)
-                        .text("")
+                        .text(card.getPlayer1().getName())
                         .backgroundColor(GRAY_LIGHT_3)
+                        .verticalAlignment(MIDDLE)
                         .build())
+                .add(TextCell.builder()
+                        .borderWidth(1)
+                        .text(String.valueOf(card.getKillsPlayer1()))
+                        .backgroundColor(GRAY_LIGHT_3)
+                        .horizontalAlignment(CENTER)
+                        .verticalAlignment(MIDDLE)
+                        .build())
+                .build();
+    }
+
+    private Row createPlayer(String playerName, int playerKills) {
+        return Row.builder()
                 .add(TextCell.builder()
                         .borderWidth(1)
                         .text(playerName)
                         .backgroundColor(GRAY_LIGHT_3)
+                        .verticalAlignment(MIDDLE)
                         .build())
                 .add(TextCell.builder()
                         .borderWidth(1)
                         .text(String.valueOf(playerKills))
                         .backgroundColor(GRAY_LIGHT_3)
                         .horizontalAlignment(CENTER)
+                        .verticalAlignment(MIDDLE)
                         .build())
                 .build();
     }
@@ -177,6 +193,7 @@ public class Util {
                         .borderWidth(1)
                         .text(String.valueOf(totalPoints))
                         .backgroundColor(GRAY_LIGHT_2)
+                        .horizontalAlignment(CENTER)
                         .build())
                 .build();
     }
@@ -187,11 +204,10 @@ public class Util {
                 .horizontalAlignment(CENTER)
                 .borderWidth(1)
                 .image(createImage(imagePath))
-                .scale(0.2f);
+                .scale(0.1f);
     }
 
     public static String generateIDString() {
         return UUID.randomUUID().toString().toUpperCase();
     }
-
 }

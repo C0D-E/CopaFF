@@ -101,7 +101,7 @@ public class Util {
                 .fontSize(7)
                 .font(HELVETICA)
                 .addRow(createHeaderRow())
-                .addRow(createSquad(card.getSquadInGamePosition(), card.getSquad().getName(), card.getSquadPositionPoints()))
+                .addRow(createSquadTitle(card.getSquadInGamePosition(), card.getSquad().getName(), card.getSquadPositionPoints()))
                 .addRow(createCard(card))
                 //                .addRow(createTotalPoints(card.getSquadTotalPoints()))
                 .build();
@@ -122,7 +122,7 @@ public class Util {
                 .build();
     }
 
-    private Row createSquad(int squadInGamePosition, String squadName, int squadPositionPoints) {
+    private Row createSquadTitle(int squadInGamePosition, String squadName, int squadPositionPoints) {
         return Row.builder()
                 .add(TextCell.builder()
                         .borderWidth(1)
@@ -140,7 +140,7 @@ public class Util {
 
     private Row createCard(SquadCard card) {
         
-        for (Object object : card.get) {
+        for (Player player : card.getPlayers()) {
             
         }
         return Row.builder()

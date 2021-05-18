@@ -1,11 +1,11 @@
 ----------------------------------------------------------------
-Mon May 17 17:40:26 CDT 2021:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137): instance a816c00e-0179-7c7c-d3e3-000021c87cd0 
-on database directory C:\Users\tavos\Documents\NetBeansProjects\CopaFF\database with class loader sun.misc.Launcher$AppClassLoader@55f96302 
-Loaded from file:/C:/Users/tavos/Documents/NetBeansProjects/CopaFF/dist/run465782837/lib/derby.jar
+Tue May 18 06:51:59 CDT 2021:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137): instance a816c00e-0179-7f51-836d-000005e7e5e8 
+on database directory C:\Users\TAVOS\Documents\NetBeansProjects\CopaFF\database with class loader sun.misc.Launcher$AppClassLoader@55f96302 
+Loaded from file:/C:/Users/TAVOS/Documents/NetBeansProjects/CopaFF/dist/run979386276/lib/derby.jar
 java.vendor=Oracle Corporation
-java.runtime.version=1.8.0_291-b10
-user.dir=C:\Users\tavos\Documents\NetBeansProjects\CopaFF
+java.runtime.version=1.8.0_171-b11
+user.dir=C:\Users\TAVOS\Documents\NetBeansProjects\CopaFF
 os.name=Windows 10
 os.arch=amd64
 os.version=10.0

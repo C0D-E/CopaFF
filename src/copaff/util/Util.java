@@ -28,6 +28,7 @@ import static org.vandeseer.easytable.settings.VerticalAlignment.MIDDLE;
 import org.vandeseer.easytable.structure.*;
 import org.vandeseer.easytable.structure.cell.*;
 import org.vandeseer.easytable.structure.cell.ImageCell.ImageCellBuilder;
+import squadcard.Player;
 import squadcard.SquadCard;
 
 /**
@@ -52,10 +53,7 @@ public class Util {
         }
         ArrayList<Table> tables = new ArrayList<>();
         for (SquadCard card : cards) {
-            File imageOutputPath = new File(imageFilePath + System.getProperty("file.separator") + card.getCardID() + ".png");
-            BufferedImage bImage = SwingFXUtils.fromFXImage(card.getSquadLogo(), null);
-            ImageIO.write(bImage, "png", imageOutputPath);
-            tables.add(createSquadCardTable(imageOutputPath.toString(), card));
+            tables.add(createSquadCardTable(card));
         }
         createAndSaveDocumentWithTables(pdfFilePath.getAbsolutePath(), tables.toArray(new Table[tables.size()]));
     }
@@ -94,7 +92,7 @@ public class Util {
         return PDImageXObject.createFromFile(imagePath, PD_DOCUMENT_FOR_IMAGES);
     }
 
-    private Table createSquadCardTable(String imagePath, SquadCard card) throws IOException {
+    private Table createSquadCardTable(SquadCard card) throws IOException {
 
         return Table.builder()
                 .addColumnsOfWidth(120, 80, 50)
@@ -104,12 +102,8 @@ public class Util {
                 .font(HELVETICA)
                 .addRow(createHeaderRow())
                 .addRow(createSquad(card.getSquadInGamePosition(), card.getSquad().getName(), card.getSquadPositionPoints()))
-                .addRow(createSquadLogo(imagePath))
-                .addRow(createPlayer(card.getPlayer1().getName(), card.getKillsPlayer1()))
-                .addRow(createPlayer(card.getPlayer2().getName(), card.getKillsPlayer2()))
-                .addRow(createPlayer(card.getPlayer3().getName(), card.getKillsPlayer3()))
-                .addRow(createPlayer(card.getPlayer4().getName(), card.getKillsPlayer4()))
-                .addRow(createTotalPoints(card.getSquadTotalPoints()))
+                .addRow(createCard(card))
+                //                .addRow(createTotalPoints(card.getSquadTotalPoints()))
                 .build();
     }
 
@@ -118,7 +112,8 @@ public class Util {
                 .add(TextCell.builder().borderWidth(1).padding(6).text("")
                         .colSpan(2)
                         .build())
-                .add(TextCell.builder().borderWidth(1).padding(6).text("PUNTOS").build())
+                .add(TextCell.builder().borderWidth(1).padding(6).text("PUNTOS")
+                        .build())
                 .backgroundColor(GRAY)
                 .textColor(WHITE)
                 .font(HELVETICA_BOLD)
@@ -132,28 +127,30 @@ public class Util {
                 .add(TextCell.builder()
                         .borderWidth(1)
                         .text(String.valueOf(squadInGamePosition) + " - " + squadName)
-                        .backgroundColor(GRAY_LIGHT_3)
                         .colSpan(2)
                         .build())
                 .add(TextCell.builder()
                         .borderWidth(1)
                         .text(String.valueOf(String.valueOf(squadPositionPoints)))
-                        .backgroundColor(GRAY_LIGHT_3)
-                        .horizontalAlignment(CENTER)
                         .build())
+                .backgroundColor(GRAY_LIGHT_3)
+                .horizontalAlignment(CENTER)
                 .build();
     }
 
-    private Row createSquadLogo(String imagePath) throws IOException {
+    private Row createCard(SquadCard card) {
+        
+        for (Object object : card.get) {
+            
+        }
         return Row.builder()
                 .add(createAndGetImageCellBuilder(imagePath)
-                        .rowSpan(5)
                         .build())
-                .build();
-    }
-
-    private Row createPlayer(String playerName, int playerKills) {
-        return Row.builder()
+                .add(TextCell.builder()
+                        .borderWidth(1)
+                        .text("")
+                        .backgroundColor(GRAY_LIGHT_3)
+                        .build())
                 .add(TextCell.builder()
                         .borderWidth(1)
                         .text(playerName)
@@ -174,6 +171,7 @@ public class Util {
                         .borderWidth(1)
                         .text("Puntos en Total")
                         .backgroundColor(GRAY_LIGHT_2)
+                        .colSpan(2)
                         .build())
                 .add(TextCell.builder()
                         .borderWidth(1)
@@ -189,8 +187,7 @@ public class Util {
                 .horizontalAlignment(CENTER)
                 .borderWidth(1)
                 .image(createImage(imagePath))
-                .scale(0.4f);
-
+                .scale(0.2f);
     }
 
     public static String generateIDString() {

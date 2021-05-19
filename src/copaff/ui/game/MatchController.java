@@ -149,7 +149,7 @@ public class MatchController implements Initializable {
                 Logger.getLogger(MatchController.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
-
+        final Player nullPlayer = new Player("00000000", "", "0000000000");
         player1.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (oldValue != null) {
                 player2.getItems().add(oldValue);
@@ -268,6 +268,12 @@ public class MatchController implements Initializable {
         } else {
             oddSquadPositions.getChildren().add(card);
         }
+        squadList.getSelectionModel().clearSelection();
+        squadPosition.setText(String.valueOf(Integer.parseInt(squadPosition.getText()) + 1));
+        player1.getItems().clear();
+        player2.getItems().clear();
+        player3.getItems().clear();
+        player4.getItems().clear();
     }
 
     @FXML

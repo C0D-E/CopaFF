@@ -6,6 +6,7 @@
 package copaff.ui.game;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXMasonryPane;
 import copaff.alert.AlertMaker;
 import copaff.database.DataHelper;
 import copaff.database.DatabaseHandler;
@@ -63,10 +64,6 @@ public class MatchController implements Initializable {
     @FXML
     private ChoiceBox<Player> player4;
     @FXML
-    private VBox oddSquadPositions;
-    @FXML
-    private VBox evenSquadPositions;
-    @FXML
     private ChoiceBox<Squad> squadList;
     @FXML
     private MaskTextField squadPosition;
@@ -76,6 +73,8 @@ public class MatchController implements Initializable {
     private VBox mainContainer;
     @FXML
     private ChoiceBox<SquadCard> cardList;
+    @FXML
+    private JFXMasonryPane cardContainer;
 
     /**
      * Initializes the controller class.
@@ -192,7 +191,6 @@ public class MatchController implements Initializable {
         });
 
         cardList.setItems(cards);
-
     }
 
     @FXML
@@ -213,13 +211,15 @@ public class MatchController implements Initializable {
     private void handleRemoveCardAction(ActionEvent event) {
         SquadCard squadCard = cardList.getSelectionModel().getSelectedItem();
         cards.remove(squadCard);
-        evenSquadPositions.getChildren().remove(squadCard);
-        oddSquadPositions.getChildren().remove(squadCard);
-
     }
 
     @FXML
     private void handleAddSquadToMatchAction(ActionEvent event) {
+        if (cards.size() >= 12) {
+            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Maximum Reach", "Please remove squads before adding more.");
+            return;
+        }
+
         if (squadList.getSelectionModel().isEmpty()
                 | player1.getSelectionModel().isEmpty()
                 | player2.getSelectionModel().isEmpty()
@@ -254,20 +254,10 @@ public class MatchController implements Initializable {
             java.util.logging.Logger.getLogger(LinkController.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
 
-        if (cards.size() < 12) {
-            cards.add(card);
-        } else {
-            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Maximum Reach", "Please remove squads before adding more.");
-            return;
-        }
-
-        card.SetCardHeight(80);
+        card.SetCardHeight(100);
         card.SetCardWidth(50);
-        if (Integer.valueOf(squadPosition.getText()) % 2 == 0) {
-            evenSquadPositions.getChildren().add(card);
-        } else {
-            oddSquadPositions.getChildren().add(card);
-        }
+        cards.add(card);
+        cardContainer.getChildren().add(card);
         squadList.getSelectionModel().clearSelection();
         squadPosition.setText(String.valueOf(Integer.parseInt(squadPosition.getText()) + 1));
         player1.getItems().clear();
@@ -389,18 +379,8 @@ public class MatchController implements Initializable {
                 card.setSquadFinalPosition(finalSquadPosition);
                 card.setSquadLogo(squadLogo);
 
-                if (cards.size() < 12) {
-                    cards.add(card);
-                } else {
-                    AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Maximum Reach", "Please remove squads before adding more.");
-                    return;
-                }
-
-                if (squadInGamePosition % 2 == 0) {
-                    evenSquadPositions.getChildren().add(card);
-                } else {
-                    oddSquadPositions.getChildren().add(card);
-                }
+                cards.add(card);
+                cardContainer.getChildren().add(card);
             }
         } catch (SQLException ex) {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Error", ex.toString());
@@ -442,7 +422,7 @@ public class MatchController implements Initializable {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "No Item Selected", "Please select the Srimmage that belongs to the match.");
             return;
         }
-        if (evenSquadPositions.getChildren().size() <= 0 & oddSquadPositions.getChildren().size() <= 0) {
+        if (cards.size() <= 0) {
             return;
         }
         for (SquadCard card : cards) {

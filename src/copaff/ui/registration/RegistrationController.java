@@ -235,7 +235,6 @@ public class RegistrationController implements Initializable {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "New player added", playerNameTmp + " has been added");
             playerID.clear();
             playerName.clear();
-            playerPhoneNumber.getEditor().clear();
             playerLogo.setImage(null);
         } else {
             AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Failed to add new player", "Check all the entries and try again");

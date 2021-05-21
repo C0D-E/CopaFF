@@ -39,7 +39,7 @@ public class Util {
     private final static Color GRAY_LIGHT_2 = new Color(240, 240, 240);
     private final static Color GRAY_LIGHT_3 = new Color(216, 216, 216);
     private static final PDDocument PD_DOCUMENT_FOR_IMAGES = new PDDocument();
-    private static final float PADDING = 50f;
+    private static final float PADDING = 30f;
     private static final String imageFilePath = System.getProperty("user.home")
             + System.getProperty("file.separator")
             + "copaff";
@@ -79,7 +79,7 @@ public class Util {
 
                 startY -= (table.getHeight() + PADDING);
             }
-
+            contentStream.close();
         }
         document.save(outputFileName);
         document.close();
@@ -93,7 +93,7 @@ public class Util {
     private Table createSquadCardTable(SquadCard card) throws IOException {
 
         return Table.builder()
-                .addColumnsOfWidth(120, 80, 50)
+                .addColumnsOfWidth(110, 80, 50)
                 .borderColor(WHITE)
                 .textColor(DARK_GRAY)
                 .fontSize(7)

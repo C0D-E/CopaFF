@@ -14,17 +14,7 @@
    <left>
       <VBox alignment="CENTER" BorderPane.alignment="CENTER">
          <children>
-            <JFXButton buttonType="RAISED" onAction="#handleRegisterAction" ripplerFill="#c0e80f" text="Registro" VBox.vgrow="ALWAYS">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </JFXButton>
-            <JFXButton buttonType="RAISED" onAction="#handleMatchAction" ripplerFill="#c0e80f" text="Match" VBox.vgrow="ALWAYS">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </JFXButton>
-            <JFXButton buttonType="RAISED" onAction="#handleLinkAction" ripplerFill="#c0e80f" text="Link" VBox.vgrow="ALWAYS">
+            <JFXButton buttonType="RAISED" onAction="#handleRegisterAction" ripplerFill="#c0e80f" text="Registration" VBox.vgrow="ALWAYS">
                <font>
                   <Font size="14.0" />
                </font>
@@ -34,7 +24,22 @@
                   <Font size="14.0" />
                </font>
             </JFXButton>
-            <JFXButton buttonType="RAISED" ripplerFill="#c0e80f" text="Acerca de" VBox.vgrow="ALWAYS">
+            <JFXButton buttonType="RAISED" onAction="#handleMatchAction" ripplerFill="#c0e80f" text="Match" VBox.vgrow="ALWAYS">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </JFXButton>
+            <JFXButton buttonType="RAISED" layoutX="28.0" layoutY="225.0" onAction="#handleMatchAction" ripplerFill="#c0e80f" text="Data">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </JFXButton>
+            <JFXButton buttonType="RAISED" onAction="#handleLinkAction" ripplerFill="#c0e80f" text="Link" VBox.vgrow="ALWAYS">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </JFXButton>
+            <JFXButton buttonType="RAISED" ripplerFill="#c0e80f" text="About" VBox.vgrow="ALWAYS">
                <font>
                   <Font size="14.0" />
                </font>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXTreeTableView?>
+<?import javafx.scene.layout.BorderPane?>
+
+<BorderPane fx:id="rootContainer" prefHeight="770.0" prefWidth="1091.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="copaff.ui.data.DataController">
+   <center>
+      <JFXTreeTableView fx:id="tableView" editable="true" tableMenuButtonVisible="true" BorderPane.alignment="CENTER" />
+   </center>
+</BorderPane>

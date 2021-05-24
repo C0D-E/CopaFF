@@ -53,6 +53,21 @@ public class FXMLDocumentController implements Initializable {
     }
 
     @FXML
+    private void handleExportDBAction(ActionEvent event) {
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        directoryChooser.setTitle("Select Location to Create Backup");
+        File selectedDirectory = directoryChooser.showDialog(stage);
+        if (selectedDirectory == null) {
+            AlertMaker.showErrorMessage("Export cancelled", "No Valid Directory Found");
+        } else {
+            DatabaseExporter databaseExporter = new DatabaseExporter(selectedDirectory);
+            //progressSpinner.visibleProperty().bind(databaseExporter.runningProperty());
+            new Thread(databaseExporter).start();
+        }
+
+    }
+
+    @FXML
     private void handleMatchAction(ActionEvent event) {
         try {
             ScrollPane table = FXMLLoader.load(getClass().getResource("/copaff/ui/game/match.fxml"));
@@ -69,6 +84,21 @@ public class FXMLDocumentController implements Initializable {
     }
 
     @FXML
+    private void handleDataAction(ActionEvent event) {
+        try {
+            BorderPane data = FXMLLoader.load(getClass().getResource("/copaff/ui/data/Data.fxml"));
+            FadeTransition ft = new FadeTransition(Duration.millis(transitionMilis), data);
+            ft.setFromValue(0.1);
+            ft.setToValue(1.0);
+            ft.play();
+            mainBorderPane.setCenter(data);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            handleError(Alert.AlertType.ERROR, ex, "It was unable to load the Registration Form", ButtonType.OK);
+        }
+
+    }
+    @FXML
     private void handleLinkAction(ActionEvent event) {
         try {
             StackPane link = FXMLLoader.load(getClass().getResource("/copaff/ui/link/FXMLLink.fxml"));
@@ -80,21 +110,6 @@ public class FXMLDocumentController implements Initializable {
         } catch (IOException ex) {
             ex.printStackTrace();
             handleError(Alert.AlertType.ERROR, ex, "It was unable to load the Registration Form", ButtonType.OK);
-        }
-
-    }
-
-    @FXML
-    private void handleExportDBAction(ActionEvent event) {
-        DirectoryChooser directoryChooser = new DirectoryChooser();
-        directoryChooser.setTitle("Select Location to Create Backup");
-        File selectedDirectory = directoryChooser.showDialog(stage);
-        if (selectedDirectory == null) {
-            AlertMaker.showErrorMessage("Export cancelled", "No Valid Directory Found");
-        } else {
-            DatabaseExporter databaseExporter = new DatabaseExporter(selectedDirectory);
-            //progressSpinner.visibleProperty().bind(databaseExporter.runningProperty());
-            new Thread(databaseExporter).start();
         }
 
     }
